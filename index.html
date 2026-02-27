@@ -2,18 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Bus Monitoring Dashboard</title>
-    <!-- Use Google Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Main Stylesheet -->
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for icons -->
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar / Header -->
+
+        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <i class="fa-solid fa-bus"></i>
@@ -24,29 +29,61 @@
         </header>
 
         <main class="main-content">
-            <!-- Top Stats Row -->
+
+            <!-- Bus Selection -->
+            <section class="bus-selector">
+                <label for="bus-select">
+                    <i class="fa-solid fa-route"></i> Select Bus:
+                </label>
+                <select id="bus-select">
+                    <option value="APSRTC-EXP-01">APSRTC-EXP-01 (Live)</option>
+                    <option value="APSRTC-INDRA-01">APSRTC-INDRA-01</option>
+                    <option value="APSRTC-ULTRA-01">APSRTC-ULTRA-01</option>
+                    <option value="APSRTC-DELUXE-01">APSRTC-DELUXE-01</option>
+                </select>
+            </section>
+
+            <!-- Top Stats -->
             <section class="stats-grid">
-                <!-- Live Count -->
+
+                <!-- Filled Seats -->
                 <div class="stat-card live-count animated">
-                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
                     <div class="card-info">
-                        <h3>Live Passengers</h3>
-                        <div class="value" id="passenger-count">0</div>
+                        <h3>Filled Seats</h3>
+                        <div class="value" id="filled-seats">0</div>
                     </div>
                 </div>
 
                 <!-- Max Capacity -->
                 <div class="stat-card capacity animated">
-                    <div class="card-icon"><i class="fa-solid fa-maximize"></i></div>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-maximize"></i>
+                    </div>
                     <div class="card-info">
                         <h3>Maximum Capacity</h3>
                         <div class="value" id="max-capacity">40</div>
                     </div>
                 </div>
 
-                <!-- Status Badge -->
+                <!-- Available Seats -->
+                <div class="stat-card capacity animated">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-chair"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Available Seats</h3>
+                        <div class="value" id="available-seats">40</div>
+                    </div>
+                </div>
+
+                <!-- Status -->
                 <div class="stat-card status animated" id="status-card">
-                    <div class="card-icon"><i class="fa-solid fa-shield-halved" id="status-icon"></i></div>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-shield-halved" id="status-icon"></i>
+                    </div>
                     <div class="card-info">
                         <h3>System Status</h3>
                         <div class="badge value" id="status-badge">Available</div>
@@ -55,47 +92,72 @@
 
                 <!-- Last Event -->
                 <div class="stat-card event animated">
-                    <div class="card-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="card-icon">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
                     <div class="card-info">
                         <h3>Last Detected Event</h3>
                         <div class="value text-value" id="last-event">System Initialized</div>
                         <div class="timestamp" id="last-event-time">--</div>
                     </div>
                 </div>
+
             </section>
 
-            <!-- Bottom Row: Architecture & Future Scope -->
+            <!-- Bottom Info Sections -->
             <div class="bottom-grid">
+
+                <!-- Architecture -->
                 <section class="info-section abstract-card">
                     <div class="section-header">
                         <i class="fa-solid fa-microchip"></i>
                         <h2>System Architecture</h2>
                     </div>
                     <ul class="feature-list">
-                        <li><i class="fa-solid fa-satellite-dish"></i> <strong>Dual Ultrasonic Sensors:</strong> Placed at the entrance and exit for precise bi-directional counting.</li>
-                        <li><i class="fa-brands fa-usb"></i> <strong>ESP32 Microcontroller:</strong> The core processing unit handling raw sensor data efficiently.</li>
-                        <li><i class="fa-solid fa-arrows-left-right"></i> <strong>Direction-Based Detection:</strong> Smart algorithm distinguishes between passenger entry and exit securely.</li>
-                        <li><i class="fa-solid fa-stopwatch"></i> <strong>Real-Time Counting:</strong> Instant passenger tally updates directly visible on the monitor.</li>
-                        <li><i class="fa-solid fa-wifi"></i> <strong>WiFi Web Monitoring:</strong> Live, seamless data transmission from the bus to this dashboard layout.</li>
+                        <li><i class="fa-solid fa-satellite-dish"></i> 
+                            <strong>Dual Ultrasonic Sensors:</strong> Placed at entrance & exit for bi-directional counting.
+                        </li>
+                        <li><i class="fa-brands fa-usb"></i> 
+                            <strong>ESP32 Microcontroller:</strong> Handles real-time sensor processing.
+                        </li>
+                        <li><i class="fa-solid fa-arrows-left-right"></i> 
+                            <strong>Direction-Based Detection:</strong> Identifies entry and exit accurately.
+                        </li>
+                        <li><i class="fa-solid fa-stopwatch"></i> 
+                            <strong>Real-Time Counting:</strong> Instant passenger updates.
+                        </li>
+                        <li><i class="fa-solid fa-wifi"></i> 
+                            <strong>WiFi Web Monitoring:</strong> Live data transmission to dashboard.
+                        </li>
                     </ul>
                 </section>
 
+                <!-- Future Scope -->
                 <section class="info-section abstract-card">
                     <div class="section-header">
                         <i class="fa-solid fa-rocket"></i>
                         <h2>Future Scope</h2>
                     </div>
                     <ul class="feature-list">
-                        <li><i class="fa-solid fa-brain"></i> <strong>AI-Based Multi-Person Detection:</strong> Vision-based confirmation using advanced ML camera systems.</li>
-                        <li><i class="fa-solid fa-border-all"></i> <strong>Multi-Sensor Grid:</strong> Extended sensor coverage specifically optimized for wide-door bus configurations.</li>
-                        <li><i class="fa-solid fa-cloud"></i> <strong>Cloud Integration:</strong> Centralized RTC monitoring across the complete public transportation fleet.</li>
+                        <li><i class="fa-solid fa-brain"></i> 
+                            <strong>AI-Based Detection:</strong> Camera-based multi-person validation.
+                        </li>
+                        <li><i class="fa-solid fa-border-all"></i> 
+                            <strong>Multi-Sensor Grid:</strong> Optimized for wide-door buses.
+                        </li>
+                        <li><i class="fa-solid fa-cloud"></i> 
+                            <strong>Cloud Fleet Monitoring:</strong> Centralized RTC tracking system.
+                        </li>
                     </ul>
                 </section>
+
             </div>
+
         </main>
     </div>
 
-    <!-- Main Script -->
+    <!-- JS -->
     <script src="script.js"></script>
+
 </body>
 </html>
