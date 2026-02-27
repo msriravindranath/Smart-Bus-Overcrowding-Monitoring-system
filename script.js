@@ -1,70 +1,111 @@
-const maxCapacity = 40;
-let currentPassengers = 35; // Start near full capacity to quickly demonstrate the "BUS FULL" feature
+const API_URL = "https://script.google.com/macros/s/AKfycbzQ91OTWx9kiuN7oGs9xNBJoG8nkWPxLQzREiYLC2tXh2tVegZ1hb8Sp2VVHdJCPXCkgA/exec";
+const LIVE_BUS = "APSRTC-EXP-01";
 
-const countDisplay = document.getElementById('passenger-count');
+const maxCapacity = 40;
+
+let simulatedPassengers = {};
+let currentPassengers = 0;
+
+const filledSeatsDisplay = document.getElementById('filled-seats');
+const availableSeatsDisplay = document.getElementById('available-seats');
+const maxCapacityDisplay = document.getElementById('max-capacity');
+
 const statusCard = document.getElementById('status-card');
 const statusBadge = document.getElementById('status-badge');
 const statusIcon = document.getElementById('status-icon');
+
 const lastEventDisplay = document.getElementById('last-event');
 const lastEventTime = document.getElementById('last-event-time');
 const clockDisplay = document.getElementById('clock');
 
-// Automatically handle the mock events to simulate hardware updates
-function refreshDashboardSensors() {
-    simulateSensorEvent();
+const busSelect = document.getElementById('bus-select');
+
+maxCapacityDisplay.innerText = maxCapacity;
+
+/* ----------------------------- */
+/* SIMULATION FOR OTHER BUSES    */
+/* ----------------------------- */
+
+function initializeSimulation() {
+    const buses = [
+        "APSRTC-INDRA-01",
+        "APSRTC-ULTRA-01",
+        "APSRTC-DELUXE-01"
+    ];
+
+    buses.forEach(bus => {
+        simulatedPassengers[bus] = Math.floor(Math.random() * 35);
+    });
 }
 
-// Mock system that emulates ESP32/Ultrasonic sensor data changes
-function simulateSensorEvent() {
-    const rand = Math.random();
+function simulateSensorEvent(bus) {
+
+    let rand = Math.random();
     let eventType = null;
-    let eventOccurred = false;
-    
-    if (currentPassengers >= maxCapacity) {
-        // High tendency to decrease if full
-        if (rand > 0.4 && currentPassengers > 0) {
-            currentPassengers--;
-            eventType = 'Passenger Exited';
-            eventOccurred = true;
+
+    let passengers = simulatedPassengers[bus];
+
+    if (passengers >= maxCapacity) {
+        if (rand > 0.4 && passengers > 0) {
+            passengers--;
+            eventType = "Passenger Exited";
         }
-    } else if (currentPassengers <= 0) {
-        // Only allow entry if empty
+    } else if (passengers <= 0) {
         if (rand > 0.4) {
-            currentPassengers++;
-            eventType = 'Passenger Entered';
-            eventOccurred = true;
+            passengers++;
+            eventType = "Passenger Entered";
         }
     } else {
-        // Randomly enter or exit
         if (rand > 0.65) {
-            currentPassengers++;
-            eventType = 'Passenger Entered';
-            eventOccurred = true;
+            passengers++;
+            eventType = "Passenger Entered";
         } else if (rand < 0.35) {
-            currentPassengers--;
-            eventType = 'Passenger Exited';
-            eventOccurred = true;
+            passengers--;
+            eventType = "Passenger Exited";
         }
     }
-    
-    if (eventOccurred) {
-        updateDashboardUI(eventType);
+
+    simulatedPassengers[bus] = passengers;
+
+    return eventType;
+}
+
+/* ----------------------------- */
+/* LIVE BUS FETCH                */
+/* ----------------------------- */
+
+async function fetchLiveBusData() {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        const bus = data.find(b => b.busNumber === LIVE_BUS);
+
+        if (bus) {
+            currentPassengers = parseInt(bus.filledSeats);
+            updateDashboardUI(null);
+        }
+    } catch (error) {
+        console.log("Live fetch error:", error);
     }
 }
 
+/* ----------------------------- */
+/* UI UPDATE FUNCTION            */
+/* ----------------------------- */
+
 function updateDashboardUI(eventType) {
-    // 1. Update Count Tracker
-    const prevCount = parseInt(countDisplay.innerText);
-    countDisplay.innerText = currentPassengers;
-    
-    // Add visual bounce animation on change
+
+    const prevCount = parseInt(filledSeatsDisplay.innerText);
+    filledSeatsDisplay.innerText = currentPassengers;
+    availableSeatsDisplay.innerText = maxCapacity - currentPassengers;
+
     if (prevCount !== currentPassengers) {
-        countDisplay.classList.remove('update-anim');
-        void countDisplay.offsetWidth; // trigger reflow
-        countDisplay.classList.add('update-anim');
+        filledSeatsDisplay.classList.remove('update-anim');
+        void filledSeatsDisplay.offsetWidth;
+        filledSeatsDisplay.classList.add('update-anim');
     }
 
-    // 2. Update System Capacity Status badge and icon
     if (currentPassengers >= maxCapacity) {
         statusCard.className = 'stat-card status danger animated danger-pulse';
         statusBadge.innerText = 'BUS FULL';
@@ -75,31 +116,52 @@ function updateDashboardUI(eventType) {
         statusIcon.className = 'fa-solid fa-check-circle';
     }
 
-    // 3. Update Last Detected Event logs
     if (eventType) {
         lastEventDisplay.innerText = eventType;
-        const now = new Date();
-        lastEventTime.innerText = now.toLocaleTimeString();
-        
+        lastEventTime.innerText = new Date().toLocaleTimeString();
+
         lastEventDisplay.classList.remove('update-anim');
         void lastEventDisplay.offsetWidth;
         lastEventDisplay.classList.add('update-anim');
     }
 }
 
-// Keeps the system clock running
-function updateClock() {
-    const now = new Date();
-    clockDisplay.innerText = now.toLocaleTimeString();
+/* ----------------------------- */
+/* MAIN REFRESH LOGIC            */
+/* ----------------------------- */
+
+function refreshSystem() {
+
+    const selectedBus = busSelect.value;
+
+    if (selectedBus === LIVE_BUS) {
+        fetchLiveBusData();
+    } else {
+        const eventType = simulateSensorEvent(selectedBus);
+        currentPassengers = simulatedPassengers[selectedBus];
+        updateDashboardUI(eventType);
+    }
 }
 
-// Initialize on page load
-document.getElementById('max-capacity').innerText = maxCapacity;
-updateDashboardUI('System Initialized');
+/* ----------------------------- */
+/* CLOCK                         */
+/* ----------------------------- */
+
+function updateClock() {
+    clockDisplay.innerText = new Date().toLocaleTimeString();
+}
+
+/* ----------------------------- */
+/* INIT                          */
+/* ----------------------------- */
+
+initializeSimulation();
 updateClock();
+updateDashboardUI("System Initialized");
 
-// Event hooks to establish automatic looping based on the timer configuration 
-setInterval(updateClock, 1000); 
+setInterval(updateClock, 1000);
+setInterval(refreshSystem, 3000);
 
-// Requirement: Auto-refresh every 2 seconds simulating new web data
-setInterval(refreshDashboardSensors, 2000);
+busSelect.addEventListener("change", () => {
+    refreshSystem();
+});
