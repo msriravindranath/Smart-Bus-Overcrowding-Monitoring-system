@@ -1,23 +1,23 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbzQ91OTWx9kiuN7oGs9xNBJoG8nkWPxLQzREiYLC2tXh2tVegZ1hb8Sp2VVHdJCPXCkgA/exec";
+
 const LIVE_BUS = "APSRTC-EXP-01";
 
-const maxCapacity = 40;
+/* DATA STORAGE */
 
-let routeData = [];
-let liveBusData = [];
+let routes = [];
+let buses = [];
 
 let simulatedPassengers = {};
 
 let currentBus = null;
-let currentPassengers = 0;
+
 
 /* DASHBOARD ELEMENTS */
 
 const filledSeatsDisplay = document.getElementById("filled-seats");
 const availableSeatsDisplay = document.getElementById("available-seats");
-const maxCapacityDisplay = document.getElementById("max-capacity");
+const totalSeatsDisplay = document.getElementById("total-seats");
 
-const statusCard = document.getElementById("status-card");
 const statusBadge = document.getElementById("status-badge");
 const statusIcon = document.getElementById("status-icon");
 
@@ -26,56 +26,112 @@ const lastEventTime = document.getElementById("last-event-time");
 
 const clockDisplay = document.getElementById("clock");
 
+const fromSelect = document.getElementById("from-select");
+const toSelect = document.getElementById("to-select");
+
+const routeResults = document.getElementById("route-results");
+
 const busSelector = document.getElementById("bus-selector");
 const busSelect = document.getElementById("bus-select");
 
 const statsGrid = document.getElementById("stats-grid");
 
-maxCapacityDisplay.innerText = maxCapacity;
+
+/* CLOCK */
+
+function updateClock() {
+
+clockDisplay.innerText = new Date().toLocaleTimeString();
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
 
 
-/* LOAD BACKEND DATA */
+/* LOAD DATA FROM API */
 
-async function loadBackendData(){
-
-try{
+async function loadData(){
 
 const response = await fetch(API_URL);
+
 const data = await response.json();
 
-routeData = data.routes;
-liveBusData = data.liveData;
+routes = data.routes;
+buses = data.liveData;
 
-}catch(error){
+initializeSimulation();
 
-console.log("API Error",error);
+buildRouteDropdowns();
+
+buildBusSelector();
 
 }
 
+loadData();
+
+
+/* CREATE ROUTE SELECT OPTIONS */
+
+function buildRouteDropdowns(){
+
+let cities = new Set();
+
+routes.forEach(route=>{
+
+cities.add(route.from);
+cities.add(route.to);
+
+});
+
+cities.forEach(city=>{
+
+let option1 = document.createElement("option");
+option1.value = city;
+option1.text = city;
+
+let option2 = option1.cloneNode(true);
+
+fromSelect.appendChild(option1);
+toSelect.appendChild(option2);
+
+});
+
 }
 
 
-/* ROUTE SEARCH */
+/* CREATE BUS SELECT DROPDOWN */
+
+function buildBusSelector(){
+
+buses.forEach(bus=>{
+
+let option = document.createElement("option");
+
+option.value = bus.busNumber;
+option.text = bus.busNumber;
+
+busSelect.appendChild(option);
+
+});
+
+}
+
+
+/* SEARCH ROUTES */
 
 function searchRoutes(){
 
-const from = document.getElementById("from-select").value;
-const to = document.getElementById("to-select").value;
+const from = fromSelect.value;
+const to = toSelect.value;
 
-const results = document.getElementById("route-results");
+routeResults.innerHTML = "";
 
-results.innerHTML = "";
+const matches = routes.filter(r=>r.from===from && r.to===to);
 
-if(!from || !to){
-results.innerHTML = "<p>Please select route locations.</p>";
-return;
-}
+if(matches.length===0){
 
-const matches = routeData.filter(route => route.from === from && route.to === to);
-
-if(matches.length === 0){
-
-results.innerHTML = "<p>No buses found on this route.</p>";
+routeResults.innerHTML = "<p>No buses found.</p>";
 return;
 
 }
@@ -84,7 +140,7 @@ matches.forEach(route=>{
 
 const card = document.createElement("div");
 
-card.className="bus-card";
+card.className = "bus-card";
 
 card.innerHTML = `
 <div class="bus-name">${route.busNumber}</div>
@@ -92,215 +148,29 @@ card.innerHTML = `
 <div class="bus-detail">Fare: ₹${route.fare}</div>
 `;
 
-card.onclick=()=>{
-selectBus(route.busNumber);
-};
+card.onclick = ()=>selectBus(route.busNumber);
 
-results.appendChild(card);
+routeResults.appendChild(card);
 
 });
 
 }
 
 
-/* BUS CARD CLICK */
+/* BUS SELECTED */
 
 function selectBus(busNumber){
 
 currentBus = busNumber;
 
-busSelect.value = busNumber;
-
 busSelector.style.display = "flex";
-
 statsGrid.style.display = "grid";
 
-refreshSystem();
+busSelect.value = busNumber;
+
+updateDashboard();
 
 }
-
-
-/* SIMULATION INIT */
-
-function initializeSimulation(){
-
-const buses = [
-"APSRTC-INDRA-01",
-"APSRTC-ULTRA-01",
-"APSRTC-DELUXE-01",
-"APSRTC-SL-03"
-];
-
-buses.forEach(bus=>{
-simulatedPassengers[bus] = Math.floor(Math.random()*35);
-});
-
-}
-
-
-/* SIMULATED SENSOR EVENTS */
-
-function simulateSensorEvent(bus){
-
-let rand = Math.random();
-
-let eventType = null;
-
-let passengers = simulatedPassengers[bus];
-
-if(passengers >= maxCapacity){
-
-if(rand > 0.4 && passengers > 0){
-passengers--;
-eventType = "Passenger Exited";
-}
-
-}
-
-else if(passengers <= 0){
-
-if(rand > 0.4){
-passengers++;
-eventType = "Passenger Entered";
-}
-
-}
-
-else{
-
-if(rand > 0.65){
-passengers++;
-eventType = "Passenger Entered";
-}
-
-else if(rand < 0.35){
-passengers--;
-eventType = "Passenger Exited";
-}
-
-}
-
-simulatedPassengers[bus] = passengers;
-
-return eventType;
-
-}
-
-
-/* FETCH LIVE BUS DATA */
-
-async function fetchLiveBusData(){
-
-try{
-
-const response = await fetch(API_URL);
-const data = await response.json();
-
-liveBusData = data.liveData;
-
-const bus = liveBusData.find(b=>b.busNumber === LIVE_BUS);
-
-if(bus){
-
-currentPassengers = parseInt(bus.filledSeats);
-
-updateDashboardUI(null);
-
-}
-
-}catch(error){
-
-console.log("Live Fetch Error",error);
-
-}
-
-}
-
-
-/* DASHBOARD UPDATE */
-
-function updateDashboardUI(eventType){
-
-filledSeatsDisplay.innerText = currentPassengers;
-
-availableSeatsDisplay.innerText = maxCapacity - currentPassengers;
-
-if(currentPassengers >= maxCapacity){
-
-statusCard.className="stat-card status danger animated danger-pulse";
-
-statusBadge.innerText="BUS FULL";
-
-statusIcon.className="fa-solid fa-triangle-exclamation";
-
-}
-
-else{
-
-statusCard.className="stat-card status success animated";
-
-statusBadge.innerText="Seats Available";
-
-statusIcon.className="fa-solid fa-check-circle";
-
-}
-
-if(eventType){
-
-lastEventDisplay.innerText = eventType;
-
-lastEventTime.innerText = new Date().toLocaleTimeString();
-
-}
-
-}
-
-
-/* MAIN SYSTEM REFRESH */
-
-function refreshSystem(){
-
-if(!currentBus) return;
-
-if(currentBus === LIVE_BUS){
-
-fetchLiveBusData();
-
-}
-
-else{
-
-const eventType = simulateSensorEvent(currentBus);
-
-currentPassengers = simulatedPassengers[currentBus];
-
-updateDashboardUI(eventType);
-
-}
-
-}
-
-
-/* CLOCK */
-
-function updateClock(){
-
-clockDisplay.innerText = new Date().toLocaleTimeString();
-
-}
-
-
-/* INIT */
-
-initializeSimulation();
-
-loadBackendData();
-
-updateClock();
-
-setInterval(updateClock,1000);
-
-setInterval(refreshSystem,3000);
 
 
 /* BUS SELECTOR CHANGE */
@@ -309,8 +179,180 @@ busSelect.addEventListener("change",()=>{
 
 currentBus = busSelect.value;
 
-refreshSystem();
+updateDashboard();
 
 });
 
 
+/* INITIALIZE SIMULATION */
+
+function initializeSimulation(){
+
+buses.forEach(bus=>{
+
+simulatedPassengers[bus.busNumber] =
+Math.floor(Math.random()*bus.totalSeats);
+
+});
+
+}
+
+
+/* SIMULATED SENSOR EVENTS */
+
+function simulateBus(bus){
+
+let passengers = simulatedPassengers[bus.busNumber];
+
+let rand = Math.random();
+
+let event = null;
+
+if(passengers >= bus.totalSeats){
+
+if(rand>0.4){
+
+passengers--;
+
+event = "Passenger Exited";
+
+}
+
+}
+
+else if(passengers <= 0){
+
+if(rand>0.4){
+
+passengers++;
+
+event = "Passenger Entered";
+
+}
+
+}
+
+else{
+
+if(rand>0.65){
+
+passengers++;
+
+event = "Passenger Entered";
+
+}
+
+else if(rand<0.35){
+
+passengers--;
+
+event = "Passenger Exited";
+
+}
+
+}
+
+simulatedPassengers[bus.busNumber] = passengers;
+
+return event;
+
+}
+
+
+/* UPDATE DASHBOARD */
+
+function updateDashboard(){
+
+if(!currentBus) return;
+
+let bus = buses.find(b=>b.busNumber===currentBus);
+
+if(!bus) return;
+
+let totalSeats = bus.totalSeats;
+
+let filledSeats;
+
+let event = null;
+
+
+/* LIVE BUS */
+
+if(currentBus === LIVE_BUS){
+
+filledSeats = parseInt(bus.filledSeats);
+
+}
+
+
+/* SIMULATED BUS */
+
+else{
+
+event = simulateBus(bus);
+
+filledSeats = simulatedPassengers[bus.busNumber];
+
+}
+
+
+/* UPDATE UI */
+
+let availableSeats = totalSeats - filledSeats;
+
+filledSeatsDisplay.innerText = filledSeats;
+availableSeatsDisplay.innerText = availableSeats;
+totalSeatsDisplay.innerText = totalSeats;
+
+
+/* STATUS */
+
+if(availableSeats<=0){
+
+statusBadge.innerText = "BUS FULL";
+statusIcon.className = "fa-solid fa-triangle-exclamation";
+
+}
+
+else{
+
+statusBadge.innerText = "Seats Available";
+statusIcon.className = "fa-solid fa-check-circle";
+
+}
+
+
+/* LAST EVENT */
+
+if(event){
+
+lastEventDisplay.innerText = event;
+
+lastEventTime.innerText = new Date().toLocaleTimeString();
+
+}
+
+}
+
+
+/* AUTO UPDATE SYSTEM */
+
+setInterval(()=>{
+
+if(!currentBus) return;
+
+/* reload live data */
+
+if(currentBus === LIVE_BUS){
+
+loadData().then(updateDashboard);
+
+}
+
+else{
+
+updateDashboard();
+
+}
+
+},3000);
