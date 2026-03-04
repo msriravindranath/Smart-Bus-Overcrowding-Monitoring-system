@@ -39,17 +39,15 @@ const statsGrid = document.getElementById("stats-grid");
 
 /* CLOCK */
 
-function updateClock() {
-
+function updateClock(){
 clockDisplay.innerText = new Date().toLocaleTimeString();
-
 }
 
 setInterval(updateClock,1000);
 updateClock();
 
 
-/* LOAD DATA FROM API */
+/* LOAD DATA FROM BACKEND */
 
 async function loadData(){
 
@@ -71,18 +69,23 @@ buildBusSelector();
 loadData();
 
 
-/* CREATE ROUTE SELECT OPTIONS */
+/* UNIQUE CITY DROPDOWNS */
 
 function buildRouteDropdowns(){
 
-let cities = new Set();
+fromSelect.innerHTML = "";
+toSelect.innerHTML = "";
+
+let citySet = new Set();
 
 routes.forEach(route=>{
 
-cities.add(route.from);
-cities.add(route.to);
+if(route.from) citySet.add(route.from);
+if(route.to) citySet.add(route.to);
 
 });
+
+let cities = Array.from(citySet).sort();
 
 cities.forEach(city=>{
 
@@ -100,9 +103,11 @@ toSelect.appendChild(option2);
 }
 
 
-/* CREATE BUS SELECT DROPDOWN */
+/* BUS SELECTOR */
 
 function buildBusSelector(){
+
+busSelect.innerHTML = "";
 
 buses.forEach(bus=>{
 
@@ -118,7 +123,7 @@ busSelect.appendChild(option);
 }
 
 
-/* SEARCH ROUTES */
+/* ROUTE SEARCH */
 
 function searchRoutes(){
 
@@ -127,11 +132,11 @@ const to = toSelect.value;
 
 routeResults.innerHTML = "";
 
-const matches = routes.filter(r=>r.from===from && r.to===to);
+const matches = routes.filter(route=>route.from===from && route.to===to);
 
-if(matches.length===0){
+if(matches.length === 0){
 
-routeResults.innerHTML = "<p>No buses found.</p>";
+routeResults.innerHTML = "<p>No buses available.</p>";
 return;
 
 }
@@ -157,7 +162,7 @@ routeResults.appendChild(card);
 }
 
 
-/* BUS SELECTED */
+/* BUS CARD CLICK */
 
 function selectBus(busNumber){
 
@@ -173,7 +178,7 @@ updateDashboard();
 }
 
 
-/* BUS SELECTOR CHANGE */
+/* BUS DROPDOWN CHANGE */
 
 busSelect.addEventListener("change",()=>{
 
@@ -198,7 +203,7 @@ Math.floor(Math.random()*bus.totalSeats);
 }
 
 
-/* SIMULATED SENSOR EVENTS */
+/* SIMULATED PASSENGER MOVEMENT */
 
 function simulateBus(bus){
 
@@ -213,7 +218,6 @@ if(passengers >= bus.totalSeats){
 if(rand>0.4){
 
 passengers--;
-
 event = "Passenger Exited";
 
 }
@@ -225,7 +229,6 @@ else if(passengers <= 0){
 if(rand>0.4){
 
 passengers++;
-
 event = "Passenger Entered";
 
 }
@@ -237,7 +240,6 @@ else{
 if(rand>0.65){
 
 passengers++;
-
 event = "Passenger Entered";
 
 }
@@ -245,7 +247,6 @@ event = "Passenger Entered";
 else if(rand<0.35){
 
 passengers--;
-
 event = "Passenger Exited";
 
 }
@@ -259,7 +260,7 @@ return event;
 }
 
 
-/* UPDATE DASHBOARD */
+/* DASHBOARD UPDATE */
 
 function updateDashboard(){
 
@@ -272,7 +273,6 @@ if(!bus) return;
 let totalSeats = bus.totalSeats;
 
 let filledSeats;
-
 let event = null;
 
 
@@ -322,12 +322,11 @@ statusIcon.className = "fa-solid fa-check-circle";
 }
 
 
-/* LAST EVENT */
+/* EVENT DISPLAY */
 
 if(event){
 
 lastEventDisplay.innerText = event;
-
 lastEventTime.innerText = new Date().toLocaleTimeString();
 
 }
@@ -335,13 +334,13 @@ lastEventTime.innerText = new Date().toLocaleTimeString();
 }
 
 
-/* AUTO UPDATE SYSTEM */
+/* AUTO UPDATE */
 
 setInterval(()=>{
 
 if(!currentBus) return;
 
-/* reload live data */
+/* reload backend for live bus */
 
 if(currentBus === LIVE_BUS){
 
