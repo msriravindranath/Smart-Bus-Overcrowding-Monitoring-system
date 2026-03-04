@@ -12,7 +12,7 @@ let simulatedPassengers = {};
 let currentBus = null;
 
 
-/* DASHBOARD ELEMENTS */
+/* ELEMENT REFERENCES */
 
 const filledSeatsDisplay = document.getElementById("filled-seats");
 const availableSeatsDisplay = document.getElementById("available-seats");
@@ -29,6 +29,8 @@ const clockDisplay = document.getElementById("clock");
 const fromSelect = document.getElementById("from-select");
 const toSelect = document.getElementById("to-select");
 
+const passengerInput = document.getElementById("passenger-count");
+
 const routeResults = document.getElementById("route-results");
 
 const busSelector = document.getElementById("bus-selector");
@@ -40,7 +42,9 @@ const statsGrid = document.getElementById("stats-grid");
 /* CLOCK */
 
 function updateClock(){
+
 clockDisplay.innerText = new Date().toLocaleTimeString();
+
 }
 
 setInterval(updateClock,1000);
@@ -103,7 +107,7 @@ toSelect.appendChild(option2);
 }
 
 
-/* BUS SELECTOR */
+/* BUS SELECTOR DROPDOWN */
 
 function buildBusSelector(){
 
@@ -130,9 +134,11 @@ function searchRoutes(){
 const from = fromSelect.value;
 const to = toSelect.value;
 
+const passengerCount = parseInt(passengerInput.value);
+
 routeResults.innerHTML = "";
 
-const matches = routes.filter(route=>route.from===from && route.to===to);
+const matches = routes.filter(route => route.from === from && route.to === to);
 
 if(matches.length === 0){
 
@@ -143,14 +149,48 @@ return;
 
 matches.forEach(route=>{
 
+let farePerPerson = route.fare;
+
+let totalFare = farePerPerson * passengerCount;
+
+
+/* GROUP DISCOUNT */
+
+if(passengerCount >= 4){
+
+totalFare = totalFare * 0.9;
+
+}
+
+if(passengerCount >= 7){
+
+totalFare = totalFare * 0.85;
+
+}
+
+
 const card = document.createElement("div");
 
 card.className = "bus-card";
 
 card.innerHTML = `
 <div class="bus-name">${route.busNumber}</div>
-<div class="bus-detail">Departure: ${route.departure}</div>
-<div class="bus-detail">Fare: ₹${route.fare}</div>
+
+<div class="bus-detail">
+Departure: ${route.departure}
+</div>
+
+<div class="bus-detail">
+Fare per person: ₹${farePerPerson}
+</div>
+
+<div class="bus-detail">
+Passengers: ${passengerCount}
+</div>
+
+<div class="bus-detail">
+Total Fare: ₹${Math.round(totalFare)}
+</div>
 `;
 
 card.onclick = ()=>selectBus(route.busNumber);
@@ -178,7 +218,7 @@ updateDashboard();
 }
 
 
-/* BUS DROPDOWN CHANGE */
+/* BUS SELECTOR CHANGE */
 
 busSelect.addEventListener("change",()=>{
 
@@ -296,9 +336,10 @@ filledSeats = simulatedPassengers[bus.busNumber];
 }
 
 
-/* UPDATE UI */
-
 let availableSeats = totalSeats - filledSeats;
+
+
+/* UPDATE UI */
 
 filledSeatsDisplay.innerText = filledSeats;
 availableSeatsDisplay.innerText = availableSeats;
@@ -307,7 +348,7 @@ totalSeatsDisplay.innerText = totalSeats;
 
 /* STATUS */
 
-if(availableSeats<=0){
+if(availableSeats <= 0){
 
 statusBadge.innerText = "BUS FULL";
 statusIcon.className = "fa-solid fa-triangle-exclamation";
@@ -327,6 +368,7 @@ statusIcon.className = "fa-solid fa-check-circle";
 if(event){
 
 lastEventDisplay.innerText = event;
+
 lastEventTime.innerText = new Date().toLocaleTimeString();
 
 }
@@ -334,13 +376,11 @@ lastEventTime.innerText = new Date().toLocaleTimeString();
 }
 
 
-/* AUTO UPDATE */
+/* AUTO UPDATE SYSTEM */
 
 setInterval(()=>{
 
 if(!currentBus) return;
-
-/* reload backend for live bus */
 
 if(currentBus === LIVE_BUS){
 
