@@ -73,14 +73,15 @@ Overcrowding Detection & Safety Control
 
 <select id="to-select"></select>
 
-<input
-type="number"
-id="passenger-count"
-min="1"
-max="10"
-value="1"
-placeholder="Passengers"
-/>
+
+<div class="passenger-input">
+
+<i class="fa-solid fa-users"></i>
+
+<input type="number" id="passenger-count" min="1" max="10" value="1">
+
+</div>
+
 
 <button onclick="searchRoutes()">
 
@@ -233,10 +234,7 @@ System Ready
 
 
 
-<!-- INFORMATION SECTIONS -->
-
-<div class="bottom-grid">
-
+<!-- SYSTEM ARCHITECTURE -->
 
 <section class="info-section">
 
@@ -248,53 +246,109 @@ System Ready
 
 </div>
 
+
 <ul class="feature-list">
+
 
 <li>
 
 <i class="fa-solid fa-satellite-dish"></i>
 
-<strong>Ultrasonic Sensors:</strong>
+<strong>Dual Ultrasonic Passenger Detection:</strong>
 
-Detect passenger movement at bus doors
+Two ultrasonic sensors are installed at the entrance and exit of the bus door. 
+These sensors continuously monitor the distance between the sensor and surrounding objects. 
+When a passenger crosses the sensing zone, the system detects the trigger event and begins passenger tracking.
 
 </li>
+
+
+<li>
+
+<i class="fa-solid fa-arrows-left-right"></i>
+
+<strong>Directional Passenger Flow Detection:</strong>
+
+A time based algorithm determines the order of sensor activation. 
+If the entrance sensor activates first followed by the exit sensor, 
+the system identifies the passenger as entering the bus. 
+The reverse sequence identifies passenger exit.
+
+</li>
+
 
 <li>
 
 <i class="fa-solid fa-microchip"></i>
 
-<strong>ESP32 Controller:</strong>
+<strong>ESP32 Edge Processing Controller:</strong>
 
-Processes entry and exit signals
+The ESP32 microcontroller processes all sensor data locally. 
+It maintains the passenger count, calculates seat availability, 
+and manages system states while ensuring real time operation.
 
 </li>
+
 
 <li>
 
-<i class="fa-solid fa-wifi"></i>
+<i class="fa-solid fa-database"></i>
 
-<strong>WiFi Data Sync:</strong>
+<strong>Cloud Data Storage using Google Sheets:</strong>
 
-Updates occupancy data to Google Cloud
+Passenger data is transmitted via WiFi from the ESP32 to a cloud based 
+Google Sheets database through Google Apps Script APIs. 
+This enables centralized data storage and remote monitoring.
 
 </li>
+
+
+<li>
+
+<i class="fa-solid fa-globe"></i>
+
+<strong>Real Time Web Dashboard:</strong>
+
+The web application retrieves bus data from the cloud and displays 
+live passenger counts, seat availability, and bus status using 
+interactive dashboard cards.
+
+</li>
+
+
+<li>
+
+<i class="fa-solid fa-route"></i>
+
+<strong>Integrated Smart Route Planner:</strong>
+
+Passengers can select origin and destination locations to view 
+available buses along that route. The system dynamically displays 
+bus schedules and estimated fares.
+
+</li>
+
 
 <li>
 
 <i class="fa-solid fa-chart-line"></i>
 
-<strong>Live Monitoring:</strong>
+<strong>Live Transport Analytics:</strong>
 
-Displays passenger data in real-time dashboard
+Bus occupancy levels, passenger flow events, and seat availability 
+are continuously updated to assist transport operators in monitoring 
+overcrowding conditions.
 
 </li>
+
 
 </ul>
 
 </section>
 
 
+
+<!-- FUTURE SCOPE -->
 
 <section class="info-section">
 
@@ -306,37 +360,98 @@ Displays passenger data in real-time dashboard
 
 </div>
 
+
 <ul class="feature-list">
 
-<li>
-
-AI based passenger detection using cameras
-
-</li>
 
 <li>
 
-Multi sensor smart bus door systems
+<i class="fa-solid fa-brain"></i>
+
+<strong>AI Based Passenger Recognition:</strong>
+
+Computer vision algorithms can be integrated to detect multiple passengers 
+simultaneously and improve counting accuracy in highly crowded conditions.
 
 </li>
+
 
 <li>
 
-Centralized RTC fleet monitoring platform
+<i class="fa-solid fa-map-location-dot"></i>
+
+<strong>Real Time GPS Bus Tracking:</strong>
+
+Future systems can integrate GPS modules to provide live bus location 
+along with occupancy information.
 
 </li>
+
 
 <li>
 
-Passenger mobile applications for live bus tracking
+<i class="fa-solid fa-cloud"></i>
+
+<strong>Centralized Fleet Monitoring Platform:</strong>
+
+All buses in a transportation network can connect to a centralized 
+cloud dashboard enabling city wide monitoring and analytics.
 
 </li>
+
+
+<li>
+
+<i class="fa-solid fa-mobile-screen"></i>
+
+<strong>Passenger Mobile Application:</strong>
+
+A mobile app could allow passengers to check seat availability, 
+bus schedules, and fares before arriving at the bus stop.
+
+</li>
+
+
+<li>
+
+<i class="fa-solid fa-ticket"></i>
+
+<strong>Smart Ticketing Integration:</strong>
+
+The system can integrate with electronic ticketing solutions to 
+automatically validate passengers and manage seat allocation.
+
+</li>
+
+
+<li>
+
+<i class="fa-solid fa-chart-simple"></i>
+
+<strong>Transport Demand Prediction:</strong>
+
+Historical passenger data can be analyzed using machine learning 
+models to predict peak demand hours and optimize bus deployment.
+
+</li>
+
+
+<li>
+
+<i class="fa-solid fa-building-columns"></i>
+
+<strong>Smart City Infrastructure Integration:</strong>
+
+The system can be integrated with smart city traffic management 
+systems to improve public transport efficiency and urban mobility.
+
+</li>
+
 
 </ul>
 
 </section>
 
-</div>
 
 
 </main>
