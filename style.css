@@ -2,21 +2,23 @@
    GLOBAL VARIABLES
 ========================= */
 
-:root {
-    --bg-dark:#12141d;
-    --card-bg:#1e2130;
-    --primary:#5c6ac4;
-    --secondary:#38bdf8;
-    --success:#00f2c3;
-    --danger:#fd5d93;
-    --warning:#fbbf24;
+:root{
+--bg-dark:#12141d;
+--card-bg:#1e2130;
 
-    --text-main:#ffffff;
-    --text-muted:#8b92a5;
+--primary:#5c6ac4;
+--secondary:#38bdf8;
 
-    --card-shadow:0 8px 32px rgba(0,0,0,0.4);
-    --transition:all 0.3s cubic-bezier(.25,.8,.25,1);
+--success:#00f2c3;
+--danger:#fd5d93;
+
+--text-main:#ffffff;
+--text-muted:#8b92a5;
+
+--card-shadow:0 8px 32px rgba(0,0,0,0.4);
+--transition:all 0.3s ease;
 }
+
 
 /* =========================
    RESET
@@ -28,41 +30,61 @@ padding:0;
 box-sizing:border-box;
 }
 
+
 /* =========================
    BODY
 ========================= */
 
 body{
+
 background-color:var(--bg-dark);
+
 color:var(--text-main);
+
 font-family:'Inter',sans-serif;
+
 min-height:100vh;
+
 display:flex;
+
 justify-content:center;
 
 background-image:radial-gradient(circle at top right,#1a1c29 0%,var(--bg-dark) 60%);
+
 }
 
+
 /* =========================
-   DASHBOARD CONTAINER
+   MAIN CONTAINER
 ========================= */
 
 .dashboard-container{
+
 width:100%;
+
 max-width:1400px;
+
 padding:2rem;
+
 display:flex;
+
 flex-direction:column;
+
 gap:2rem;
+
 }
+
 
 /* =========================
    HEADER
 ========================= */
 
 .header{
+
 display:flex;
+
 align-items:center;
+
 justify-content:space-between;
 
 padding:1rem 2rem;
@@ -74,58 +96,96 @@ border-radius:16px;
 box-shadow:var(--card-shadow);
 
 border-left:4px solid var(--primary);
+
 }
 
+
 .logo{
+
 font-size:1.5rem;
+
 font-weight:700;
+
 display:flex;
+
 align-items:center;
+
 gap:0.75rem;
+
 }
 
 .logo i{
+
 color:var(--primary);
+
 }
+
 
 .subtitle{
+
 color:var(--text-muted);
+
 font-size:1rem;
+
 flex-grow:1;
+
 margin-left:2rem;
+
 }
 
+
 .time-display{
+
 font-family:monospace;
-font-size:1.25rem;
+
+font-size:1.2rem;
+
 color:var(--success);
+
 background:rgba(0,242,195,0.1);
+
 padding:0.5rem 1rem;
+
 border-radius:8px;
+
 letter-spacing:1px;
+
 }
+
 
 /* =========================
    ROUTE PLANNER
 ========================= */
 
 .route-planner{
+
 background:var(--card-bg);
+
 border-radius:16px;
+
 padding:1.5rem;
+
 box-shadow:var(--card-shadow);
+
 }
 
 .route-controls{
+
 margin-top:1rem;
+
 display:flex;
+
 gap:1rem;
+
 flex-wrap:wrap;
+
 }
+
 
 .route-controls select{
 
 background:#2a2e42;
+
 color:white;
 
 border:none;
@@ -140,19 +200,21 @@ transition:var(--transition);
 
 }
 
+
 .route-controls select:hover{
 
 box-shadow:0 0 6px rgba(56,189,248,0.4);
 
 }
 
+
 .route-controls button{
 
 background:linear-gradient(135deg,var(--primary),var(--secondary));
 
-color:white;
-
 border:none;
+
+color:white;
 
 padding:0.5rem 1.2rem;
 
@@ -170,12 +232,13 @@ transition:var(--transition);
 
 transform:translateY(-2px);
 
-box-shadow:0 6px 18px rgba(56,189,248,0.4);
+box-shadow:0 6px 20px rgba(56,189,248,0.4);
 
 }
 
+
 /* =========================
-   BUS RESULT CARDS
+   BUS SEARCH RESULTS
 ========================= */
 
 .bus-results-grid{
@@ -189,6 +252,7 @@ grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 gap:1rem;
 
 }
+
 
 .bus-card{
 
@@ -208,6 +272,7 @@ box-shadow:0 4px 18px rgba(0,0,0,0.4);
 
 }
 
+
 .bus-card:hover{
 
 transform:translateY(-4px);
@@ -215,6 +280,7 @@ transform:translateY(-4px);
 box-shadow:0 8px 28px rgba(0,0,0,0.7);
 
 }
+
 
 .bus-name{
 
@@ -228,6 +294,7 @@ margin-bottom:4px;
 
 }
 
+
 .bus-detail{
 
 font-size:0.9rem;
@@ -235,6 +302,7 @@ font-size:0.9rem;
 color:#cbd5e1;
 
 }
+
 
 /* =========================
    BUS SELECTOR
@@ -296,8 +364,9 @@ box-shadow:0 0 6px rgba(56,189,248,0.4);
 
 }
 
+
 /* =========================
-   STATS GRID
+   DASHBOARD GRID
 ========================= */
 
 .stats-grid{
@@ -309,6 +378,7 @@ grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 gap:1.5rem;
 
 }
+
 
 .stat-card{
 
@@ -328,9 +398,8 @@ box-shadow:var(--card-shadow);
 
 transition:var(--transition);
 
-position:relative;
-
 }
+
 
 .stat-card:hover{
 
@@ -339,6 +408,7 @@ transform:translateY(-5px);
 box-shadow:0 12px 40px rgba(0,0,0,0.6);
 
 }
+
 
 .card-icon{
 
@@ -360,6 +430,7 @@ background:rgba(255,255,255,0.05);
 
 }
 
+
 .card-info{
 
 display:flex;
@@ -369,6 +440,7 @@ flex-direction:column;
 gap:0.5rem;
 
 }
+
 
 .card-info h3{
 
@@ -380,6 +452,7 @@ text-transform:uppercase;
 
 }
 
+
 .value{
 
 font-size:2.3rem;
@@ -387,6 +460,7 @@ font-size:2.3rem;
 font-weight:700;
 
 }
+
 
 .badge{
 
@@ -400,32 +474,18 @@ font-weight:600;
 
 }
 
-.status.success .badge{
 
-color:var(--success);
+.status .badge{
 
 background:rgba(0,242,195,0.1);
 
-}
-
-.status.danger .badge{
-
-color:var(--danger);
-
-background:rgba(253,93,147,0.1);
+color:var(--success);
 
 }
 
-.timestamp{
-
-font-size:0.75rem;
-
-color:var(--text-muted);
-
-}
 
 /* =========================
-   BOTTOM GRID
+   INFO SECTIONS
 ========================= */
 
 .bottom-grid{
@@ -438,6 +498,7 @@ gap:2rem;
 
 }
 
+
 .info-section{
 
 background:var(--card-bg);
@@ -449,6 +510,7 @@ padding:2rem;
 box-shadow:var(--card-shadow);
 
 }
+
 
 .section-header{
 
@@ -466,6 +528,7 @@ border-bottom:1px solid rgba(255,255,255,0.1);
 
 }
 
+
 .section-header i{
 
 font-size:1.4rem;
@@ -473,6 +536,7 @@ font-size:1.4rem;
 color:var(--primary);
 
 }
+
 
 .feature-list{
 
@@ -486,6 +550,7 @@ gap:1rem;
 
 }
 
+
 .feature-list li{
 
 display:flex;
@@ -498,41 +563,6 @@ color:#e2e8f0;
 
 }
 
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes pulse{
-
-0%{transform:scale(1)}
-
-50%{transform:scale(1.05)}
-
-100%{transform:scale(1)}
-
-}
-
-.update-anim{
-
-animation:pulse 0.5s ease-in-out;
-
-}
-
-@keyframes danger-pulse{
-
-0%{box-shadow:0 0 0 0 rgba(253,93,147,0.4)}
-
-70%{box-shadow:0 0 0 15px rgba(253,93,147,0)}
-
-100%{box-shadow:0 0 0 0 rgba(253,93,147,0)}
-
-}
-
-.danger-pulse{
-
-animation:danger-pulse 2s infinite;
-
-}
 
 /* =========================
    RESPONSIVE
@@ -541,31 +571,47 @@ animation:danger-pulse 2s infinite;
 @media(max-width:768px){
 
 .header{
+
 flex-direction:column;
+
 align-items:flex-start;
+
 gap:1rem;
+
 }
 
 .subtitle{
-margin-left:0;
-}
 
-.bottom-grid{
-grid-template-columns:1fr;
+margin-left:0;
+
 }
 
 .route-controls{
+
 flex-direction:column;
+
 align-items:stretch;
+
 }
 
 .route-controls button{
+
 width:100%;
+
 }
 
 .bus-selector{
+
 flex-direction:column;
+
 align-items:flex-start;
+
+}
+
+.bottom-grid{
+
+grid-template-columns:1fr;
+
 }
 
 }
