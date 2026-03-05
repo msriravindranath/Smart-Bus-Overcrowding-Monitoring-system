@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxiucTLY69niH_gOjWSPscET1CRX2Op7-_b2EpHPe0K47L7599uJEbDJCPK8iPTFbQPHg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbytBGLfWm60o8DXNQeL0yl-OvDCl_nVxOKMfEXmFC9UTldDaX_5e7t_UyjQ9UDT4XnGlA/exec";
 
 const LIVE_BUS = "APSRTC-EXP-01";
 
@@ -457,5 +457,6 @@ setInterval(() => {
     }
 
 },3000);
+
 
 
