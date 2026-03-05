@@ -140,7 +140,7 @@ letter-spacing:1px;
 }
 
 /* =========================
-SECTION CONTAINER
+SECTION BOXES
 ========================= */
 
 .info-section{
@@ -150,8 +150,6 @@ background:var(--card-bg);
 border-radius:18px;
 
 padding:2rem;
-
-margin-top:1rem;
 
 box-shadow:var(--card-shadow);
 
@@ -190,7 +188,7 @@ font-size:1.3rem;
 }
 
 /* =========================
-ROUTE CONTROLS
+ROUTE PLANNER CONTROLS
 ========================= */
 
 .route-controls{
@@ -320,7 +318,7 @@ margin-top:1.5rem;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(250px,1fr));
+repeat(auto-fit,minmax(260px,1fr));
 
 gap:1.2rem;
 
@@ -371,6 +369,47 @@ font-size:0.9rem;
 color:#cbd5e1;
 
 margin-bottom:3px;
+
+}
+
+/* =========================
+SHOW BUSES BUTTON
+========================= */
+
+.show-buses-container{
+
+margin-top:20px;
+
+display:flex;
+justify-content:center;
+
+}
+
+#show-buses-btn{
+
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+
+border:none;
+
+color:white;
+
+padding:10px 20px;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:var(--transition);
+
+}
+
+#show-buses-btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 6px 20px rgba(56,189,248,0.4);
 
 }
 
