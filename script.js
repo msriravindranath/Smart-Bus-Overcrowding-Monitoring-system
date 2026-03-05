@@ -57,7 +57,6 @@ updateClock();
 
 async function loadData(){
 
-```
 const response = await fetch(API_URL);
 const data = await response.json();
 
@@ -67,7 +66,6 @@ buses = data.liveData;
 initializeSimulation();
 buildRouteDropdowns();
 buildBusSelector();
-```
 
 }
 
@@ -77,7 +75,6 @@ loadData();
 
 function buildRouteDropdowns(){
 
-```
 fromSelect.innerHTML = "";
 toSelect.innerHTML = "";
 
@@ -123,7 +120,6 @@ cities.forEach(city => {
     toSelect.appendChild(option2);
 
 });
-```
 
 }
 
@@ -131,7 +127,6 @@ cities.forEach(city => {
 
 function buildBusSelector(){
 
-```
 busSelect.innerHTML = "";
 
 buses.forEach(bus => {
@@ -144,7 +139,6 @@ buses.forEach(bus => {
     busSelect.appendChild(option);
 
 });
-```
 
 }
 
@@ -152,7 +146,6 @@ buses.forEach(bus => {
 
 function searchRoutes(){
 
-```
 const from = fromSelect.value;
 const to = toSelect.value;
 
@@ -267,7 +260,7 @@ routes.forEach(route1 => {
     });
 
 });
-```
+
 
 }
 
@@ -275,7 +268,6 @@ routes.forEach(route1 => {
 
 function selectBus(busNumber){
 
-```
 currentBus = busNumber;
 
 busSelector.style.display = "flex";
@@ -288,7 +280,6 @@ routeResults.style.display = "none";
 showBusesContainer.style.display = "flex";
 
 updateDashboard();
-```
 
 }
 
@@ -296,11 +287,9 @@ updateDashboard();
 
 showBusesBtn.addEventListener("click", () => {
 
-```
 routeResults.style.display = "grid";
 
 showBusesContainer.style.display = "none";
-```
 
 });
 
@@ -308,11 +297,9 @@ showBusesContainer.style.display = "none";
 
 busSelect.addEventListener("change", () => {
 
-```
 currentBus = busSelect.value;
 
 updateDashboard();
-```
 
 });
 
@@ -320,20 +307,17 @@ updateDashboard();
 
 function initializeSimulation(){
 
-```
 buses.forEach(bus => {
 
     simulatedPassengers[bus.busNumber] =
     Math.floor(Math.random()*bus.totalSeats);
 
 });
-```
 
 }
 
 function simulateBus(bus){
 
-```
 let passengers = simulatedPassengers[bus.busNumber];
 
 let rand = Math.random();
@@ -383,7 +367,6 @@ else{
 simulatedPassengers[bus.busNumber] = passengers;
 
 return event;
-```
 
 }
 
@@ -391,7 +374,6 @@ return event;
 
 function updateDashboard(){
 
-```
 if(!currentBus) return;
 
 let bus = buses.find(b => b.busNumber === currentBus);
@@ -445,7 +427,6 @@ if(event){
     lastEventTime.innerText = new Date().toLocaleTimeString();
 
 }
-```
 
 }
 
@@ -453,7 +434,6 @@ if(event){
 
 setInterval(() => {
 
-```
 if(!currentBus) return;
 
 if(currentBus === LIVE_BUS){
@@ -467,6 +447,7 @@ else{
     updateDashboard();
 
 }
-```
+
 
 },3000);
+
