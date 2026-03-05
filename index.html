@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Smart Bus Monitoring Dashboard</title>
@@ -17,55 +17,39 @@
 
 </head>
 
-
 <body>
 
 <div class="dashboard-container">
-
 
 <!-- HEADER -->
 
 <header class="header">
 
 <div class="logo">
-
 <i class="fa-solid fa-bus"></i>
-
 <span>SmartBus IoT</span>
-
 </div>
 
 <p class="subtitle">
-
 Overcrowding Detection & Safety Control
-
 </p>
 
 <div class="time-display" id="clock">
-
 --:--:--
-
 </div>
 
 </header>
 
-
-
 <main class="main-content">
-
 
 <!-- ROUTE PLANNER -->
 
 <section class="route-planner info-section">
 
 <div class="section-header">
-
 <i class="fa-solid fa-route"></i>
-
 <h2>Bus Route Planner</h2>
-
 </div>
-
 
 <div class="route-controls">
 
@@ -73,154 +57,103 @@ Overcrowding Detection & Safety Control
 
 <select id="to-select"></select>
 
-
 <div class="passenger-input">
-
 <i class="fa-solid fa-users"></i>
-
 <input type="number" id="passenger-count" min="1" max="10" value="1">
-
 </div>
 
-
 <button onclick="searchRoutes()">
-
 Search Buses
-
 </button>
 
 </div>
 
-
 <div id="route-results" class="bus-results-grid"></div>
 
 </section>
-
-
 
 <!-- BUS SELECTOR -->
 
 <section class="bus-selector" id="bus-selector" style="display:none">
 
 <label for="bus-select">
-
 <i class="fa-solid fa-bus"></i>
-
 Selected Bus
-
 </label>
 
 <select id="bus-select"></select>
 
 </section>
 
-
-
 <!-- DASHBOARD -->
 
 <section class="stats-grid" id="stats-grid" style="display:none">
 
-
 <div class="stat-card">
 
 <div class="card-icon">
-
 <i class="fa-solid fa-users"></i>
-
 </div>
 
 <div class="card-info">
-
 <h3>Filled Seats</h3>
-
 <div class="value" id="filled-seats">0</div>
-
 </div>
 
 </div>
-
-
 
 <div class="stat-card">
 
 <div class="card-icon">
-
 <i class="fa-solid fa-chair"></i>
-
 </div>
 
 <div class="card-info">
-
 <h3>Available Seats</h3>
-
 <div class="value" id="available-seats">0</div>
-
 </div>
 
 </div>
-
-
 
 <div class="stat-card">
 
 <div class="card-icon">
-
 <i class="fa-solid fa-maximize"></i>
-
 </div>
 
 <div class="card-info">
-
 <h3>Total Seats</h3>
-
 <div class="value" id="total-seats">0</div>
-
 </div>
 
 </div>
-
-
 
 <div class="stat-card status" id="status-card">
 
 <div class="card-icon">
-
 <i class="fa-solid fa-shield-halved" id="status-icon"></i>
-
 </div>
 
 <div class="card-info">
-
 <h3>Bus Status</h3>
-
 <div class="badge value" id="status-badge">
-
 Seats Available
-
+</div>
 </div>
 
 </div>
-
-</div>
-
-
 
 <div class="stat-card">
 
 <div class="card-icon">
-
 <i class="fa-solid fa-clock"></i>
-
 </div>
 
 <div class="card-info">
-
 <h3>Last Event</h3>
 
 <div class="value text-value" id="last-event">
-
 System Ready
-
 </div>
 
 <div class="timestamp" id="last-event-time">--</div>
@@ -229,39 +162,29 @@ System Ready
 
 </div>
 
-
 </section>
-
-
 
 <!-- SYSTEM ARCHITECTURE -->
 
 <section class="info-section">
 
 <div class="section-header">
-
 <i class="fa-solid fa-microchip"></i>
-
 <h2>System Architecture</h2>
-
 </div>
-
 
 <ul class="feature-list">
 
-
 <li>
-
 <i class="fa-solid fa-satellite-dish"></i>
 
 <strong>Dual Ultrasonic Passenger Detection:</strong>
 
-Two ultrasonic sensors are installed at the entrance and exit of the bus door. 
-These sensors continuously monitor the distance between the sensor and surrounding objects. 
+Two ultrasonic sensors are installed at the entrance and exit of the bus door.
+These sensors continuously monitor the distance between the sensor and surrounding objects.
 When a passenger crosses the sensing zone, the system detects the trigger event and begins passenger tracking.
 
 </li>
-
 
 <li>
 
@@ -269,13 +192,12 @@ When a passenger crosses the sensing zone, the system detects the trigger event 
 
 <strong>Directional Passenger Flow Detection:</strong>
 
-A time based algorithm determines the order of sensor activation. 
-If the entrance sensor activates first followed by the exit sensor, 
-the system identifies the passenger as entering the bus. 
+A time based algorithm determines the order of sensor activation.
+If the entrance sensor activates first followed by the exit sensor,
+the system identifies the passenger as entering the bus.
 The reverse sequence identifies passenger exit.
 
 </li>
-
 
 <li>
 
@@ -283,12 +205,11 @@ The reverse sequence identifies passenger exit.
 
 <strong>ESP32 Edge Processing Controller:</strong>
 
-The ESP32 microcontroller processes all sensor data locally. 
-It maintains the passenger count, calculates seat availability, 
+The ESP32 microcontroller processes all sensor data locally.
+It maintains the passenger count, calculates seat availability,
 and manages system states while ensuring real time operation.
 
 </li>
-
 
 <li>
 
@@ -296,12 +217,11 @@ and manages system states while ensuring real time operation.
 
 <strong>Cloud Data Storage using Google Sheets:</strong>
 
-Passenger data is transmitted via WiFi from the ESP32 to a cloud based 
-Google Sheets database through Google Apps Script APIs. 
+Passenger data is transmitted via WiFi from the ESP32 to a cloud based
+Google Sheets database through Google Apps Script APIs.
 This enables centralized data storage and remote monitoring.
 
 </li>
-
 
 <li>
 
@@ -309,12 +229,11 @@ This enables centralized data storage and remote monitoring.
 
 <strong>Real Time Web Dashboard:</strong>
 
-The web application retrieves bus data from the cloud and displays 
-live passenger counts, seat availability, and bus status using 
+The web application retrieves bus data from the cloud and displays
+live passenger counts, seat availability, and bus status using
 interactive dashboard cards.
 
 </li>
-
 
 <li>
 
@@ -322,12 +241,11 @@ interactive dashboard cards.
 
 <strong>Integrated Smart Route Planner:</strong>
 
-Passengers can select origin and destination locations to view 
-available buses along that route. The system dynamically displays 
+Passengers can select origin and destination locations to view
+available buses along that route. The system dynamically displays
 bus schedules and estimated fares.
 
 </li>
-
 
 <li>
 
@@ -335,34 +253,26 @@ bus schedules and estimated fares.
 
 <strong>Live Transport Analytics:</strong>
 
-Bus occupancy levels, passenger flow events, and seat availability 
-are continuously updated to assist transport operators in monitoring 
+Bus occupancy levels, passenger flow events, and seat availability
+are continuously updated to assist transport operators in monitoring
 overcrowding conditions.
 
 </li>
 
-
 </ul>
 
 </section>
-
-
 
 <!-- FUTURE SCOPE -->
 
 <section class="info-section">
 
 <div class="section-header">
-
 <i class="fa-solid fa-rocket"></i>
-
 <h2>Future Scope</h2>
-
 </div>
 
-
 <ul class="feature-list">
-
 
 <li>
 
@@ -370,11 +280,10 @@ overcrowding conditions.
 
 <strong>AI Based Passenger Recognition:</strong>
 
-Computer vision algorithms can be integrated to detect multiple passengers 
+Computer vision algorithms can be integrated to detect multiple passengers
 simultaneously and improve counting accuracy in highly crowded conditions.
 
 </li>
-
 
 <li>
 
@@ -382,11 +291,10 @@ simultaneously and improve counting accuracy in highly crowded conditions.
 
 <strong>Real Time GPS Bus Tracking:</strong>
 
-Future systems can integrate GPS modules to provide live bus location 
+Future systems can integrate GPS modules to provide live bus location
 along with occupancy information.
 
 </li>
-
 
 <li>
 
@@ -394,11 +302,10 @@ along with occupancy information.
 
 <strong>Centralized Fleet Monitoring Platform:</strong>
 
-All buses in a transportation network can connect to a centralized 
+All buses in a transportation network can connect to a centralized
 cloud dashboard enabling city wide monitoring and analytics.
 
 </li>
-
 
 <li>
 
@@ -406,11 +313,10 @@ cloud dashboard enabling city wide monitoring and analytics.
 
 <strong>Passenger Mobile Application:</strong>
 
-A mobile app could allow passengers to check seat availability, 
+A mobile app could allow passengers to check seat availability,
 bus schedules, and fares before arriving at the bus stop.
 
 </li>
-
 
 <li>
 
@@ -418,11 +324,10 @@ bus schedules, and fares before arriving at the bus stop.
 
 <strong>Smart Ticketing Integration:</strong>
 
-The system can integrate with electronic ticketing solutions to 
+The system can integrate with electronic ticketing solutions to
 automatically validate passengers and manage seat allocation.
 
 </li>
-
 
 <li>
 
@@ -430,11 +335,10 @@ automatically validate passengers and manage seat allocation.
 
 <strong>Transport Demand Prediction:</strong>
 
-Historical passenger data can be analyzed using machine learning 
+Historical passenger data can be analyzed using machine learning
 models to predict peak demand hours and optimize bus deployment.
 
 </li>
-
 
 <li>
 
@@ -442,22 +346,18 @@ models to predict peak demand hours and optimize bus deployment.
 
 <strong>Smart City Infrastructure Integration:</strong>
 
-The system can be integrated with smart city traffic management 
+The system can be integrated with smart city traffic management
 systems to improve public transport efficiency and urban mobility.
 
 </li>
-
 
 </ul>
 
 </section>
 
-
-
 </main>
 
 </div>
-
 
 <script src="script.js"></script>
 
