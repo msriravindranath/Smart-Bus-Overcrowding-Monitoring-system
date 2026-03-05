@@ -137,36 +137,105 @@ function searchRoutes(){
 
     routeResults.innerHTML = "";
 
-    const matches = routes.filter(route => route.from === from && route.to === to);
+    /* DIRECT ROUTES */
 
-    if(matches.length === 0){
+    const directRoutes = routes.filter(route =>
+        route.from === from && route.to === to
+    );
 
-        routeResults.innerHTML = "<p>No buses available.</p>";
+    if(directRoutes.length > 0){
+
+        displayDirectRoutes(directRoutes, passengerCount);
         return;
 
     }
 
-    matches.forEach(route => {
+    /* CONNECTING ROUTES */
+
+    let connections = [];
+
+    routes.forEach(route1 => {
+
+        if(route1.from === from){
+
+            routes.forEach(route2 => {
+
+                if(route2.from === route1.to && route2.to === to){
+
+                    connections.push({
+                        first: route1,
+                        second: route2
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+
+    if(connections.length === 0){
+
+        routeResults.innerHTML = "<p>No routes available.</p>";
+        return;
+
+    }
+
+    connections.forEach(conn => {
+
+        const card = document.createElement("div");
+        card.className = "bus-card";
+
+        card.innerHTML = `
+
+        <div class="bus-name">Connecting Route</div>
+
+        <div class="bus-detail">
+        ${conn.first.busNumber} : ${conn.first.from} → ${conn.first.to}
+        </div>
+
+        <div class="bus-detail">
+        Departure: ${conn.first.departure}
+        </div>
+
+        <div class="bus-detail">
+        ${conn.second.busNumber} : ${conn.second.from} → ${conn.second.to}
+        </div>
+
+        <div class="bus-detail">
+        Departure: ${conn.second.departure}
+        </div>
+
+        `;
+
+        card.onclick = () => selectBus(conn.first.busNumber);
+
+        routeResults.appendChild(card);
+
+    });
+
+}
+
+
+
+/* DISPLAY DIRECT ROUTES */
+
+function displayDirectRoutes(routesList, passengerCount){
+
+    routesList.forEach(route => {
 
         let farePerPerson = route.fare;
 
         let totalFare = farePerPerson * passengerCount;
 
-
-        /* GROUP DISCOUNT */
-
         if(passengerCount >= 4){
-
             totalFare = totalFare * 0.9;
-
         }
 
         if(passengerCount >= 7){
-
             totalFare = totalFare * 0.85;
-
         }
-
 
         const card = document.createElement("div");
 
@@ -175,6 +244,10 @@ function searchRoutes(){
         card.innerHTML = `
 
         <div class="bus-name">${route.busNumber}</div>
+
+        <div class="bus-detail">
+        ${route.from} → ${route.to}
+        </div>
 
         <div class="bus-detail">
         Departure: ${route.departure}
@@ -321,17 +394,11 @@ function updateDashboard(){
     let filledSeats;
     let event = null;
 
-
-    /* LIVE BUS */
-
     if(currentBus === LIVE_BUS){
 
         filledSeats = parseInt(bus.filledSeats);
 
     }
-
-
-    /* SIMULATED BUS */
 
     else{
 
@@ -340,17 +407,11 @@ function updateDashboard(){
 
     }
 
-
     let availableSeats = totalSeats - filledSeats;
-
 
     filledSeatsDisplay.innerText = filledSeats;
     availableSeatsDisplay.innerText = availableSeats;
     totalSeatsDisplay.innerText = totalSeats;
-
-
-
-    /* STATUS */
 
     if(availableSeats <= 0){
 
@@ -365,9 +426,6 @@ function updateDashboard(){
         statusIcon.className = "fa-solid fa-check-circle";
 
     }
-
-
-    /* EVENT */
 
     if(event){
 
@@ -399,5 +457,3 @@ setInterval(() => {
     }
 
 },3000);
-
-
