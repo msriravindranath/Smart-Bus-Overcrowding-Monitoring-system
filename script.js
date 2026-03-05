@@ -31,6 +31,9 @@ const passengerInput = document.getElementById("passenger-count");
 
 const routeResults = document.getElementById("route-results");
 
+const showBusesContainer = document.getElementById("show-buses-container");
+const showBusesBtn = document.getElementById("show-buses-btn");
+
 const busSelector = document.getElementById("bus-selector");
 const busSelect = document.getElementById("bus-select");
 
@@ -38,7 +41,7 @@ const statsGrid = document.getElementById("stats-grid");
 
 /* CLOCK */
 
-function updateClock() {
+function updateClock(){
 clockDisplay.innerText = new Date().toLocaleTimeString();
 }
 
@@ -65,7 +68,7 @@ buildBusSelector();
 
 loadData();
 
-/* ROUTE DROPDOWNS */
+/* BUILD DROPDOWNS */
 
 function buildRouteDropdowns(){
 
@@ -84,7 +87,7 @@ routes.forEach(route => {
 
 let cities = Array.from(citySet).sort();
 
-/* PLACEHOLDER OPTIONS */
+/* placeholders */
 
 let fromPlaceholder = document.createElement("option");
 fromPlaceholder.text = "From";
@@ -121,7 +124,6 @@ cities.forEach(city => {
 
 function buildBusSelector(){
 
-
 busSelect.innerHTML = "";
 
 buses.forEach(bus => {
@@ -135,12 +137,12 @@ buses.forEach(bus => {
 
 });
 
-
 }
 
 /* ROUTE SEARCH */
 
 function searchRoutes(){
+
 
 const from = fromSelect.value;
 const to = toSelect.value;
@@ -149,113 +151,23 @@ const passengerCount = parseInt(passengerInput.value);
 
 routeResults.innerHTML = "";
 
-if(!from || !to){
+routeResults.style.display = "grid";
+showBusesContainer.style.display = "none";
 
-    routeResults.innerHTML = "<p>Please select both locations.</p>";
-    return;
+/* DIRECT BUSES */
 
-}
-
-/* DIRECT ROUTES */
-
-const directRoutes = routes.filter(route =>
-    route.from === from && route.to === to
-);
-
-if(directRoutes.length > 0){
-
-    displayDirectRoutes(directRoutes, passengerCount);
-    return;
-
-}
-
-/* CONNECTING ROUTES */
-
-let connections = [];
-
-routes.forEach(route1 => {
-
-    if(route1.from === from){
-
-        routes.forEach(route2 => {
-
-            if(route2.from === route1.to && route2.to === to){
-
-                connections.push({
-                    first: route1,
-                    second: route2
-                });
-
-            }
-
-        });
-
-    }
-
-});
-
-if(connections.length === 0){
-
-    routeResults.innerHTML = "<p>No buses available for this route.</p>";
-    return;
-
-}
-
-connections.forEach(conn => {
-
-    const card = document.createElement("div");
-
-    card.className = "bus-card";
-
-    card.innerHTML = `
-
-    <div class="bus-name">Connecting Route</div>
-
-    <div class="bus-detail">
-    ${conn.first.busNumber} : ${conn.first.from} → ${conn.first.to}
-    </div>
-
-    <div class="bus-detail">
-    Departure: ${conn.first.departure}
-    </div>
-
-    <div class="bus-detail">
-    ${conn.second.busNumber} : ${conn.second.from} → ${conn.second.to}
-    </div>
-
-    <div class="bus-detail">
-    Departure: ${conn.second.departure}
-    </div>
-
-    `;
-
-    card.onclick = () => selectBus(conn.first.busNumber);
-
-    routeResults.appendChild(card);
-
-});
+const directMatches =
+routes.filter(route => route.from === from && route.to === to);
 
 
-}
-
-/* DISPLAY DIRECT ROUTES */
-
-function displayDirectRoutes(routesList, passengerCount){
-
-
-routesList.forEach(route => {
+directMatches.forEach(route => {
 
     let farePerPerson = route.fare;
 
     let totalFare = farePerPerson * passengerCount;
 
-    if(passengerCount >= 4){
-        totalFare = totalFare * 0.9;
-    }
-
-    if(passengerCount >= 7){
-        totalFare = totalFare * 0.85;
-    }
+    if(passengerCount >= 4) totalFare *= 0.9;
+    if(passengerCount >= 7) totalFare *= 0.85;
 
     const card = document.createElement("div");
 
@@ -264,10 +176,6 @@ routesList.forEach(route => {
     card.innerHTML = `
 
     <div class="bus-name">${route.busNumber}</div>
-
-    <div class="bus-detail">
-    ${route.from} → ${route.to}
-    </div>
 
     <div class="bus-detail">
     Departure: ${route.departure}
@@ -294,9 +202,56 @@ routesList.forEach(route => {
 });
 
 
+/* CONNECTING ROUTES */
+
+routes.forEach(route1 => {
+
+    if(route1.from !== from) return;
+
+    routes.forEach(route2 => {
+
+        if(route2.from === route1.to && route2.to === to){
+
+            const card = document.createElement("div");
+
+            card.className = "bus-card";
+
+            card.innerHTML = `
+
+            <div class="bus-name">Connecting Route</div>
+
+            <div class="bus-detail">
+            ${route1.busNumber} : ${route1.from} → ${route1.to}
+            </div>
+
+            <div class="bus-detail">
+            Departure: ${route1.departure}
+            </div>
+
+            <div class="bus-detail">
+            ${route2.busNumber} : ${route2.from} → ${route2.to}
+            </div>
+
+            <div class="bus-detail">
+            Departure: ${route2.departure}
+            </div>
+
+            `;
+
+            card.onclick = () => selectBus(route1.busNumber);
+
+            routeResults.appendChild(card);
+
+        }
+
+    });
+
+});
+
+
 }
 
-/* BUS CARD CLICK */
+/* BUS SELECT */
 
 function selectBus(busNumber){
 
@@ -308,15 +263,29 @@ statsGrid.style.display = "grid";
 
 busSelect.value = busNumber;
 
+routeResults.style.display = "none";
+
+showBusesContainer.style.display = "flex";
+
 updateDashboard();
 
 
 }
 
-/* BUS SELECTOR CHANGE */
+/* SHOW BUSES AGAIN */
+
+showBusesBtn.addEventListener("click", () => {
+
+
+routeResults.style.display = "grid";
+
+showBusesContainer.style.display = "none";
+
+});
+
+/* BUS SELECT CHANGE */
 
 busSelect.addEventListener("change", () => {
-
 
 currentBus = busSelect.value;
 
@@ -341,6 +310,7 @@ buses.forEach(bus => {
 }
 
 function simulateBus(bus){
+
 
 let passengers = simulatedPassengers[bus.busNumber];
 
@@ -392,11 +362,13 @@ simulatedPassengers[bus.busNumber] = passengers;
 
 return event;
 
+
 }
 
 /* DASHBOARD */
 
 function updateDashboard(){
+
 
 if(!currentBus) return;
 
@@ -428,6 +400,7 @@ filledSeatsDisplay.innerText = filledSeats;
 availableSeatsDisplay.innerText = availableSeats;
 totalSeatsDisplay.innerText = totalSeats;
 
+
 if(availableSeats <= 0){
 
     statusBadge.innerText = "BUS FULL";
@@ -449,11 +422,13 @@ if(event){
 
 }
 
+
 }
 
 /* AUTO REFRESH */
 
 setInterval(() => {
+
 
 if(!currentBus) return;
 
@@ -469,5 +444,5 @@ else{
 
 }
 
-},3000);
 
+},3000);
