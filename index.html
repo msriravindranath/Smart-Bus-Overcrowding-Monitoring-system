@@ -5,6 +5,7 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Smart Bus Monitoring Dashboard</title>
@@ -26,16 +27,23 @@
 <header class="header">
 
 <div class="logo">
+
 <i class="fa-solid fa-bus"></i>
+
 <span>SmartBus IoT</span>
+
 </div>
 
 <p class="subtitle">
+
 Overcrowding Detection & Safety Control
+
 </p>
 
 <div class="time-display" id="clock">
+
 --:--:--
+
 </div>
 
 </header>
@@ -47,8 +55,11 @@ Overcrowding Detection & Safety Control
 <section class="route-planner info-section">
 
 <div class="section-header">
+
 <i class="fa-solid fa-route"></i>
+
 <h2>Bus Route Planner</h2>
+
 </div>
 
 <div class="route-controls">
@@ -58,17 +69,32 @@ Overcrowding Detection & Safety Control
 <select id="to-select"></select>
 
 <div class="passenger-input">
+
 <i class="fa-solid fa-users"></i>
+
 <input type="number" id="passenger-count" min="1" max="10" value="1">
+
 </div>
 
 <button onclick="searchRoutes()">
+
 Search Buses
+
 </button>
 
 </div>
 
 <div id="route-results" class="bus-results-grid"></div>
+
+<div class="show-buses-container" id="show-buses-container" style="display:none;">
+
+<button id="show-buses-btn">
+
+<i class="fa-solid fa-list"></i> Show Available Buses
+
+</button>
+
+</div>
 
 </section>
 
@@ -77,8 +103,11 @@ Search Buses
 <section class="bus-selector" id="bus-selector" style="display:none">
 
 <label for="bus-select">
+
 <i class="fa-solid fa-bus"></i>
+
 Selected Bus
+
 </label>
 
 <select id="bus-select"></select>
@@ -92,12 +121,17 @@ Selected Bus
 <div class="stat-card">
 
 <div class="card-icon">
+
 <i class="fa-solid fa-users"></i>
+
 </div>
 
 <div class="card-info">
+
 <h3>Filled Seats</h3>
+
 <div class="value" id="filled-seats">0</div>
+
 </div>
 
 </div>
@@ -105,12 +139,17 @@ Selected Bus
 <div class="stat-card">
 
 <div class="card-icon">
+
 <i class="fa-solid fa-chair"></i>
+
 </div>
 
 <div class="card-info">
+
 <h3>Available Seats</h3>
+
 <div class="value" id="available-seats">0</div>
+
 </div>
 
 </div>
@@ -118,12 +157,17 @@ Selected Bus
 <div class="stat-card">
 
 <div class="card-icon">
+
 <i class="fa-solid fa-maximize"></i>
+
 </div>
 
 <div class="card-info">
+
 <h3>Total Seats</h3>
+
 <div class="value" id="total-seats">0</div>
+
 </div>
 
 </div>
@@ -131,14 +175,21 @@ Selected Bus
 <div class="stat-card status" id="status-card">
 
 <div class="card-icon">
+
 <i class="fa-solid fa-shield-halved" id="status-icon"></i>
+
 </div>
 
 <div class="card-info">
+
 <h3>Bus Status</h3>
+
 <div class="badge value" id="status-badge">
+
 Seats Available
+
 </div>
+
 </div>
 
 </div>
@@ -146,14 +197,19 @@ Seats Available
 <div class="stat-card">
 
 <div class="card-icon">
+
 <i class="fa-solid fa-clock"></i>
+
 </div>
 
 <div class="card-info">
+
 <h3>Last Event</h3>
 
 <div class="value text-value" id="last-event">
+
 System Ready
+
 </div>
 
 <div class="timestamp" id="last-event-time">--</div>
@@ -169,13 +225,17 @@ System Ready
 <section class="info-section">
 
 <div class="section-header">
+
 <i class="fa-solid fa-microchip"></i>
+
 <h2>System Architecture</h2>
+
 </div>
 
 <ul class="feature-list">
 
 <li>
+
 <i class="fa-solid fa-satellite-dish"></i>
 
 <strong>Dual Ultrasonic Passenger Detection:</strong>
@@ -268,8 +328,11 @@ overcrowding conditions.
 <section class="info-section">
 
 <div class="section-header">
+
 <i class="fa-solid fa-rocket"></i>
+
 <h2>Future Scope</h2>
+
 </div>
 
 <ul class="feature-list">
