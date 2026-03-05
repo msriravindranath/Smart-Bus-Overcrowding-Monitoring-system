@@ -39,6 +39,11 @@ const busSelect = document.getElementById("bus-select");
 
 const statsGrid = document.getElementById("stats-grid");
 
+/* MAP ELEMENTS */
+
+const mapSection = document.getElementById("map-section");
+const routeMap = document.getElementById("route-map");
+
 /* CLOCK */
 
 function updateClock(){
@@ -52,7 +57,7 @@ updateClock();
 
 async function loadData(){
 
-
+```
 const response = await fetch(API_URL);
 const data = await response.json();
 
@@ -62,17 +67,17 @@ buses = data.liveData;
 initializeSimulation();
 buildRouteDropdowns();
 buildBusSelector();
-
+```
 
 }
 
 loadData();
 
-/* BUILD DROPDOWNS */
+/* BUILD ROUTE DROPDOWNS */
 
 function buildRouteDropdowns(){
 
-
+```
 fromSelect.innerHTML = "";
 toSelect.innerHTML = "";
 
@@ -86,6 +91,7 @@ routes.forEach(route => {
 });
 
 let cities = Array.from(citySet).sort();
+
 
 /* placeholders */
 
@@ -104,6 +110,7 @@ toPlaceholder.selected = true;
 fromSelect.appendChild(fromPlaceholder);
 toSelect.appendChild(toPlaceholder);
 
+
 cities.forEach(city => {
 
     let option1 = document.createElement("option");
@@ -116,14 +123,15 @@ cities.forEach(city => {
     toSelect.appendChild(option2);
 
 });
-
+```
 
 }
 
-/* BUS SELECTOR */
+/* BUILD BUS SELECTOR */
 
 function buildBusSelector(){
 
+```
 busSelect.innerHTML = "";
 
 buses.forEach(bus => {
@@ -136,6 +144,7 @@ buses.forEach(bus => {
     busSelect.appendChild(option);
 
 });
+```
 
 }
 
@@ -143,7 +152,7 @@ buses.forEach(bus => {
 
 function searchRoutes(){
 
-
+```
 const from = fromSelect.value;
 const to = toSelect.value;
 
@@ -154,7 +163,18 @@ routeResults.innerHTML = "";
 routeResults.style.display = "grid";
 showBusesContainer.style.display = "none";
 
-/* DIRECT BUSES */
+
+/* SHOW MAP */
+
+const mapURL =
+`https://www.google.com/maps?q=${from}+to+${to}&output=embed`;
+
+routeMap.src = mapURL;
+
+mapSection.style.display = "block";
+
+
+/* DIRECT ROUTES */
 
 const directMatches =
 routes.filter(route => route.from === from && route.to === to);
@@ -247,15 +267,15 @@ routes.forEach(route1 => {
     });
 
 });
-
+```
 
 }
 
-/* BUS SELECT */
+/* SELECT BUS */
 
 function selectBus(busNumber){
 
-
+```
 currentBus = busNumber;
 
 busSelector.style.display = "flex";
@@ -268,7 +288,7 @@ routeResults.style.display = "none";
 showBusesContainer.style.display = "flex";
 
 updateDashboard();
-
+```
 
 }
 
@@ -276,21 +296,23 @@ updateDashboard();
 
 showBusesBtn.addEventListener("click", () => {
 
-
+```
 routeResults.style.display = "grid";
 
 showBusesContainer.style.display = "none";
+```
 
 });
 
-/* BUS SELECT CHANGE */
+/* BUS SELECTOR CHANGE */
 
 busSelect.addEventListener("change", () => {
 
+```
 currentBus = busSelect.value;
 
 updateDashboard();
-
+```
 
 });
 
@@ -298,20 +320,20 @@ updateDashboard();
 
 function initializeSimulation(){
 
-
+```
 buses.forEach(bus => {
 
     simulatedPassengers[bus.busNumber] =
     Math.floor(Math.random()*bus.totalSeats);
 
 });
-
+```
 
 }
 
 function simulateBus(bus){
 
-
+```
 let passengers = simulatedPassengers[bus.busNumber];
 
 let rand = Math.random();
@@ -361,15 +383,15 @@ else{
 simulatedPassengers[bus.busNumber] = passengers;
 
 return event;
-
+```
 
 }
 
-/* DASHBOARD */
+/* DASHBOARD UPDATE */
 
 function updateDashboard(){
 
-
+```
 if(!currentBus) return;
 
 let bus = buses.find(b => b.busNumber === currentBus);
@@ -396,6 +418,7 @@ else{
 
 let availableSeats = totalSeats - filledSeats;
 
+
 filledSeatsDisplay.innerText = filledSeats;
 availableSeatsDisplay.innerText = availableSeats;
 totalSeatsDisplay.innerText = totalSeats;
@@ -415,13 +438,14 @@ else{
 
 }
 
+
 if(event){
 
     lastEventDisplay.innerText = event;
     lastEventTime.innerText = new Date().toLocaleTimeString();
 
 }
-
+```
 
 }
 
@@ -429,7 +453,7 @@ if(event){
 
 setInterval(() => {
 
-
+```
 if(!currentBus) return;
 
 if(currentBus === LIVE_BUS){
@@ -443,6 +467,6 @@ else{
     updateDashboard();
 
 }
-
+```
 
 },3000);
