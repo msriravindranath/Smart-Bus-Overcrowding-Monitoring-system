@@ -2,7 +2,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbytBGLfWm60o8DXNQeL0yl-
 
 const LIVE_BUS = "APSRTC-EXP-01";
 
-
 /* DATA STORAGE */
 
 let routes = [];
@@ -10,7 +9,6 @@ let buses = [];
 
 let simulatedPassengers = {};
 let currentBus = null;
-
 
 /* ELEMENTS */
 
@@ -38,426 +36,437 @@ const busSelect = document.getElementById("bus-select");
 
 const statsGrid = document.getElementById("stats-grid");
 
-
 /* CLOCK */
 
 function updateClock() {
-    clockDisplay.innerText = new Date().toLocaleTimeString();
+clockDisplay.innerText = new Date().toLocaleTimeString();
 }
 
 setInterval(updateClock,1000);
 updateClock();
 
-
-
-/* LOAD DATA FROM GOOGLE SHEETS */
+/* LOAD DATA */
 
 async function loadData(){
 
-    const response = await fetch(API_URL);
-    const data = await response.json();
 
-    routes = data.routes;
-    buses = data.liveData;
+const response = await fetch(API_URL);
+const data = await response.json();
 
-    initializeSimulation();
-    buildRouteDropdowns();
-    buildBusSelector();
+routes = data.routes;
+buses = data.liveData;
+
+initializeSimulation();
+buildRouteDropdowns();
+buildBusSelector();
+
 
 }
 
 loadData();
 
-
-
-/* UNIQUE CITY DROPDOWNS */
+/* ROUTE DROPDOWNS */
 
 function buildRouteDropdowns(){
 
-    fromSelect.innerHTML = "";
-    toSelect.innerHTML = "";
 
-    let citySet = new Set();
+fromSelect.innerHTML = "";
+toSelect.innerHTML = "";
 
-    routes.forEach(route => {
+let citySet = new Set();
 
-        if(route.from) citySet.add(route.from);
-        if(route.to) citySet.add(route.to);
+routes.forEach(route => {
 
-    });
+    if(route.from) citySet.add(route.from);
+    if(route.to) citySet.add(route.to);
 
-    let cities = Array.from(citySet).sort();
+});
 
-    cities.forEach(city => {
+let cities = Array.from(citySet).sort();
 
-        let option1 = document.createElement("option");
-        option1.value = city;
-        option1.text = city;
+/* PLACEHOLDER OPTIONS */
 
-        let option2 = option1.cloneNode(true);
+let fromPlaceholder = document.createElement("option");
+fromPlaceholder.text = "From";
+fromPlaceholder.value = "";
+fromPlaceholder.disabled = true;
+fromPlaceholder.selected = true;
 
-        fromSelect.appendChild(option1);
-        toSelect.appendChild(option2);
+let toPlaceholder = document.createElement("option");
+toPlaceholder.text = "To";
+toPlaceholder.value = "";
+toPlaceholder.disabled = true;
+toPlaceholder.selected = true;
 
-    });
+fromSelect.appendChild(fromPlaceholder);
+toSelect.appendChild(toPlaceholder);
+
+cities.forEach(city => {
+
+    let option1 = document.createElement("option");
+    option1.value = city;
+    option1.text = city;
+
+    let option2 = option1.cloneNode(true);
+
+    fromSelect.appendChild(option1);
+    toSelect.appendChild(option2);
+
+});
+
 
 }
-
-
 
 /* BUS SELECTOR */
 
 function buildBusSelector(){
 
-    busSelect.innerHTML = "";
 
-    buses.forEach(bus => {
+busSelect.innerHTML = "";
 
-        let option = document.createElement("option");
+buses.forEach(bus => {
 
-        option.value = bus.busNumber;
-        option.text = bus.busNumber;
+    let option = document.createElement("option");
 
-        busSelect.appendChild(option);
+    option.value = bus.busNumber;
+    option.text = bus.busNumber;
 
-    });
+    busSelect.appendChild(option);
+
+});
+
 
 }
-
-
 
 /* ROUTE SEARCH */
 
 function searchRoutes(){
 
-    const from = fromSelect.value;
-    const to = toSelect.value;
+const from = fromSelect.value;
+const to = toSelect.value;
 
-    const passengerCount = parseInt(passengerInput.value);
+const passengerCount = parseInt(passengerInput.value);
 
-    routeResults.innerHTML = "";
+routeResults.innerHTML = "";
 
-    /* DIRECT ROUTES */
+if(!from || !to){
 
-    const directRoutes = routes.filter(route =>
-        route.from === from && route.to === to
-    );
-
-    if(directRoutes.length > 0){
-
-        displayDirectRoutes(directRoutes, passengerCount);
-        return;
-
-    }
-
-    /* CONNECTING ROUTES */
-
-    let connections = [];
-
-    routes.forEach(route1 => {
-
-        if(route1.from === from){
-
-            routes.forEach(route2 => {
-
-                if(route2.from === route1.to && route2.to === to){
-
-                    connections.push({
-                        first: route1,
-                        second: route2
-                    });
-
-                }
-
-            });
-
-        }
-
-    });
-
-    if(connections.length === 0){
-
-        routeResults.innerHTML = "<p>No routes available.</p>";
-        return;
-
-    }
-
-    connections.forEach(conn => {
-
-        const card = document.createElement("div");
-        card.className = "bus-card";
-
-        card.innerHTML = `
-
-        <div class="bus-name">Connecting Route</div>
-
-        <div class="bus-detail">
-        ${conn.first.busNumber} : ${conn.first.from} → ${conn.first.to}
-        </div>
-
-        <div class="bus-detail">
-        Departure: ${conn.first.departure}
-        </div>
-
-        <div class="bus-detail">
-        ${conn.second.busNumber} : ${conn.second.from} → ${conn.second.to}
-        </div>
-
-        <div class="bus-detail">
-        Departure: ${conn.second.departure}
-        </div>
-
-        `;
-
-        card.onclick = () => selectBus(conn.first.busNumber);
-
-        routeResults.appendChild(card);
-
-    });
+    routeResults.innerHTML = "<p>Please select both locations.</p>";
+    return;
 
 }
 
+/* DIRECT ROUTES */
 
+const directRoutes = routes.filter(route =>
+    route.from === from && route.to === to
+);
+
+if(directRoutes.length > 0){
+
+    displayDirectRoutes(directRoutes, passengerCount);
+    return;
+
+}
+
+/* CONNECTING ROUTES */
+
+let connections = [];
+
+routes.forEach(route1 => {
+
+    if(route1.from === from){
+
+        routes.forEach(route2 => {
+
+            if(route2.from === route1.to && route2.to === to){
+
+                connections.push({
+                    first: route1,
+                    second: route2
+                });
+
+            }
+
+        });
+
+    }
+
+});
+
+if(connections.length === 0){
+
+    routeResults.innerHTML = "<p>No buses available for this route.</p>";
+    return;
+
+}
+
+connections.forEach(conn => {
+
+    const card = document.createElement("div");
+
+    card.className = "bus-card";
+
+    card.innerHTML = `
+
+    <div class="bus-name">Connecting Route</div>
+
+    <div class="bus-detail">
+    ${conn.first.busNumber} : ${conn.first.from} → ${conn.first.to}
+    </div>
+
+    <div class="bus-detail">
+    Departure: ${conn.first.departure}
+    </div>
+
+    <div class="bus-detail">
+    ${conn.second.busNumber} : ${conn.second.from} → ${conn.second.to}
+    </div>
+
+    <div class="bus-detail">
+    Departure: ${conn.second.departure}
+    </div>
+
+    `;
+
+    card.onclick = () => selectBus(conn.first.busNumber);
+
+    routeResults.appendChild(card);
+
+});
+
+
+}
 
 /* DISPLAY DIRECT ROUTES */
 
 function displayDirectRoutes(routesList, passengerCount){
 
-    routesList.forEach(route => {
 
-        let farePerPerson = route.fare;
+routesList.forEach(route => {
 
-        let totalFare = farePerPerson * passengerCount;
+    let farePerPerson = route.fare;
 
-        if(passengerCount >= 4){
-            totalFare = totalFare * 0.9;
-        }
+    let totalFare = farePerPerson * passengerCount;
 
-        if(passengerCount >= 7){
-            totalFare = totalFare * 0.85;
-        }
+    if(passengerCount >= 4){
+        totalFare = totalFare * 0.9;
+    }
 
-        const card = document.createElement("div");
+    if(passengerCount >= 7){
+        totalFare = totalFare * 0.85;
+    }
 
-        card.className = "bus-card";
+    const card = document.createElement("div");
 
-        card.innerHTML = `
+    card.className = "bus-card";
 
-        <div class="bus-name">${route.busNumber}</div>
+    card.innerHTML = `
 
-        <div class="bus-detail">
-        ${route.from} → ${route.to}
-        </div>
+    <div class="bus-name">${route.busNumber}</div>
 
-        <div class="bus-detail">
-        Departure: ${route.departure}
-        </div>
+    <div class="bus-detail">
+    ${route.from} → ${route.to}
+    </div>
 
-        <div class="bus-detail">
-        Fare per person: ₹${farePerPerson}
-        </div>
+    <div class="bus-detail">
+    Departure: ${route.departure}
+    </div>
 
-        <div class="bus-detail">
-        Passengers: ${passengerCount}
-        </div>
+    <div class="bus-detail">
+    Fare per person: ₹${farePerPerson}
+    </div>
 
-        <div class="bus-detail">
-        Total Fare: ₹${Math.round(totalFare)}
-        </div>
+    <div class="bus-detail">
+    Passengers: ${passengerCount}
+    </div>
 
-        `;
+    <div class="bus-detail">
+    Total Fare: ₹${Math.round(totalFare)}
+    </div>
 
-        card.onclick = () => selectBus(route.busNumber);
+    `;
 
-        routeResults.appendChild(card);
+    card.onclick = () => selectBus(route.busNumber);
 
-    });
+    routeResults.appendChild(card);
+
+});
+
 
 }
-
-
 
 /* BUS CARD CLICK */
 
 function selectBus(busNumber){
 
-    currentBus = busNumber;
 
-    busSelector.style.display = "flex";
-    statsGrid.style.display = "grid";
+currentBus = busNumber;
 
-    busSelect.value = busNumber;
+busSelector.style.display = "flex";
+statsGrid.style.display = "grid";
 
-    updateDashboard();
+busSelect.value = busNumber;
+
+updateDashboard();
+
 
 }
-
-
 
 /* BUS SELECTOR CHANGE */
 
 busSelect.addEventListener("change", () => {
 
-    currentBus = busSelect.value;
 
-    updateDashboard();
+currentBus = busSelect.value;
+
+updateDashboard();
+
+
+});
+
+/* SIMULATION */
+
+function initializeSimulation(){
+
+
+buses.forEach(bus => {
+
+    simulatedPassengers[bus.busNumber] =
+    Math.floor(Math.random()*bus.totalSeats);
 
 });
 
 
-
-/* INITIALIZE SIMULATION */
-
-function initializeSimulation(){
-
-    buses.forEach(bus => {
-
-        simulatedPassengers[bus.busNumber] =
-        Math.floor(Math.random()*bus.totalSeats);
-
-    });
-
 }
-
-
-
-/* SIMULATED BUS PASSENGER FLOW */
 
 function simulateBus(bus){
 
-    let passengers = simulatedPassengers[bus.busNumber];
+let passengers = simulatedPassengers[bus.busNumber];
 
-    let rand = Math.random();
+let rand = Math.random();
 
-    let event = null;
+let event = null;
 
-    if(passengers >= bus.totalSeats){
+if(passengers >= bus.totalSeats){
 
-        if(rand > 0.4){
+    if(rand > 0.4){
 
-            passengers--;
-            event = "Passenger Exited";
-
-        }
+        passengers--;
+        event = "Passenger Exited";
 
     }
-
-    else if(passengers <= 0){
-
-        if(rand > 0.4){
-
-            passengers++;
-            event = "Passenger Entered";
-
-        }
-
-    }
-
-    else{
-
-        if(rand > 0.65){
-
-            passengers++;
-            event = "Passenger Entered";
-
-        }
-
-        else if(rand < 0.35){
-
-            passengers--;
-            event = "Passenger Exited";
-
-        }
-
-    }
-
-    simulatedPassengers[bus.busNumber] = passengers;
-
-    return event;
 
 }
 
+else if(passengers <= 0){
 
+    if(rand > 0.4){
 
-/* DASHBOARD UPDATE */
+        passengers++;
+        event = "Passenger Entered";
+
+    }
+
+}
+
+else{
+
+    if(rand > 0.65){
+
+        passengers++;
+        event = "Passenger Entered";
+
+    }
+
+    else if(rand < 0.35){
+
+        passengers--;
+        event = "Passenger Exited";
+
+    }
+
+}
+
+simulatedPassengers[bus.busNumber] = passengers;
+
+return event;
+
+}
+
+/* DASHBOARD */
 
 function updateDashboard(){
 
-    if(!currentBus) return;
+if(!currentBus) return;
 
-    let bus = buses.find(b => b.busNumber === currentBus);
+let bus = buses.find(b => b.busNumber === currentBus);
 
-    if(!bus) return;
+if(!bus) return;
 
-    let totalSeats = parseInt(bus.totalSeats);
+let totalSeats = parseInt(bus.totalSeats);
 
-    let filledSeats;
-    let event = null;
+let filledSeats;
+let event = null;
 
-    if(currentBus === LIVE_BUS){
+if(currentBus === LIVE_BUS){
 
-        filledSeats = parseInt(bus.filledSeats);
-
-    }
-
-    else{
-
-        event = simulateBus(bus);
-        filledSeats = simulatedPassengers[bus.busNumber];
-
-    }
-
-    let availableSeats = totalSeats - filledSeats;
-
-    filledSeatsDisplay.innerText = filledSeats;
-    availableSeatsDisplay.innerText = availableSeats;
-    totalSeatsDisplay.innerText = totalSeats;
-
-    if(availableSeats <= 0){
-
-        statusBadge.innerText = "BUS FULL";
-        statusIcon.className = "fa-solid fa-triangle-exclamation";
-
-    }
-
-    else{
-
-        statusBadge.innerText = "Seats Available";
-        statusIcon.className = "fa-solid fa-check-circle";
-
-    }
-
-    if(event){
-
-        lastEventDisplay.innerText = event;
-        lastEventTime.innerText = new Date().toLocaleTimeString();
-
-    }
+    filledSeats = parseInt(bus.filledSeats);
 
 }
 
+else{
 
+    event = simulateBus(bus);
+    filledSeats = simulatedPassengers[bus.busNumber];
+
+}
+
+let availableSeats = totalSeats - filledSeats;
+
+filledSeatsDisplay.innerText = filledSeats;
+availableSeatsDisplay.innerText = availableSeats;
+totalSeatsDisplay.innerText = totalSeats;
+
+if(availableSeats <= 0){
+
+    statusBadge.innerText = "BUS FULL";
+    statusIcon.className = "fa-solid fa-triangle-exclamation";
+
+}
+
+else{
+
+    statusBadge.innerText = "Seats Available";
+    statusIcon.className = "fa-solid fa-check-circle";
+
+}
+
+if(event){
+
+    lastEventDisplay.innerText = event;
+    lastEventTime.innerText = new Date().toLocaleTimeString();
+
+}
+
+}
 
 /* AUTO REFRESH */
 
 setInterval(() => {
 
-    if(!currentBus) return;
+if(!currentBus) return;
 
-    if(currentBus === LIVE_BUS){
+if(currentBus === LIVE_BUS){
 
-        loadData().then(updateDashboard);
+    loadData().then(updateDashboard);
 
-    }
+}
 
-    else{
+else{
 
-        updateDashboard();
+    updateDashboard();
 
-    }
+}
 
 },3000);
-
-
-
-
