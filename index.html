@@ -1,392 +1,254 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Bus Monitoring Dashboard</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Smart Bus Monitoring Dashboard</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-
-<div class="dashboard-container">
-
-<!-- HEADER -->
-
-<header class="header">
-
-<div class="logo">
-
-<i class="fa-solid fa-bus"></i> <span>SmartBus IoT</span>
-
-</div>
-
-<p class="subtitle">
-
-IoT Bus Overcrowding Detection & Smart Route Monitoring System
-
-</p>
-
-<div class="time-display" id="clock">
-
---:--:--
-
-</div>
-
-</header>
-
-<main class="main-content">
-
-<!-- ROUTE PLANNER -->
-
-<section class="route-planner info-section">
-
-<div class="section-header">
-
-<i class="fa-solid fa-route"></i>
-
-<h2>Bus Route Planner</h2>
-
-</div>
-
-<div class="route-controls">
-
-<select id="from-select"></select>
-
-<select id="to-select"></select>
-
-<div class="passenger-input">
-
-<i class="fa-solid fa-users"></i>
-
-<input type="number" id="passenger-count" min="1" max="10" value="1">
-
-</div>
-
-<button onclick="searchRoutes()">
-
-Search Buses
-
-</button>
-
-</div>
-
-<div id="route-results" class="bus-results-grid"></div>
-
-<div class="show-buses-container" id="show-buses-container" style="display:none;">
-
-<button id="show-buses-btn">
-
-<i class="fa-solid fa-list"></i> Show Available Buses
-
-</button>
-
-</div>
-
-</section>
-
-<!-- ROUTE MAP -->
-
-<section class="info-section" id="map-section" style="display:none;">
-
-<div class="section-header">
-
-<i class="fa-solid fa-map-location-dot"></i>
-
-<h2>Bus Route Map</h2>
-
-</div>
-
-<div class="map-container">
-
-<iframe
-id="route-map"
-width="100%"
-height="420"
-style="border:0;border-radius:12px"
-loading="lazy"
-allowfullscreen
-referrerpolicy="no-referrer-when-downgrade">
-
-</iframe>
-
-</div>
-
-</section>
-
-<!-- BUS SELECTOR -->
-
-<section class="bus-selector" id="bus-selector" style="display:none">
-
-<label for="bus-select">
-
-<i class="fa-solid fa-bus"></i>
-Selected Bus
-
-</label>
-
-<select id="bus-select"></select>
-
-</section>
-
-<!-- DASHBOARD -->
-
-<section class="stats-grid" id="stats-grid" style="display:none">
-
-<div class="stat-card">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-users"></i>
-
-</div>
-
-<div class="card-info">
-
-<h3>Filled Seats</h3>
-
-<div class="value" id="filled-seats">0</div>
-
-</div>
-
-</div>
-
-<div class="stat-card">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-chair"></i>
-
-</div>
-
-<div class="card-info">
-
-<h3>Available Seats</h3>
-
-<div class="value" id="available-seats">0</div>
-
-</div>
-
-</div>
-
-<div class="stat-card">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-maximize"></i>
-
-</div>
-
-<div class="card-info">
-
-<h3>Total Seats</h3>
-
-<div class="value" id="total-seats">0</div>
-
-</div>
-
-</div>
-
-<div class="stat-card status" id="status-card">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-shield-halved" id="status-icon"></i>
-
-</div>
-
-<div class="card-info">
-
-<h3>Bus Status</h3>
-
-<div class="badge value" id="status-badge">
-
-Seats Available
-
-</div>
-
-</div>
-
-</div>
-
-<div class="stat-card">
-
-<div class="card-icon">
-
-<i class="fa-solid fa-clock"></i>
-
-</div>
-
-<div class="card-info">
-
-<h3>Last Event</h3>
-
-<div class="value text-value" id="last-event">
-
-System Ready
-
-</div>
-
-<div class="timestamp" id="last-event-time">--</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- SYSTEM ARCHITECTURE -->
-
-<section class="info-section">
-
-<div class="section-header">
-
-<i class="fa-solid fa-microchip"></i>
-
-<h2>System Architecture</h2>
-
-</div>
-
-<ul class="feature-list">
-
-<li>
-
-<i class="fa-solid fa-satellite-dish"></i>
-
-<strong>Dual Ultrasonic Passenger Detection:</strong>
-
-Two ultrasonic sensors are installed at the entrance and exit of the bus door. These sensors monitor passenger movement through distance detection.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-arrows-left-right"></i>
-
-<strong>Directional Passenger Flow Detection:</strong>
-
-Sensor activation order determines whether a passenger enters or exits the bus.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-microchip"></i>
-
-<strong>ESP32 Edge Controller:</strong>
-
-The ESP32 processes sensor signals, manages passenger counts, and sends data to the cloud.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-database"></i>
-
-<strong>Cloud Storage using Google Sheets:</strong>
-
-Passenger occupancy data is stored in Google Sheets through Apps Script APIs.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-globe"></i>
-
-<strong>Real-Time Dashboard:</strong>
-
-Users can monitor bus occupancy and availability from a web dashboard.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-route"></i>
-
-<strong>Smart Route Planner:</strong>
-
-Passengers can search routes between cities and view available buses and fares.
-
-</li>
-
-</ul>
-
-</section>
-
-<!-- FUTURE SCOPE -->
-
-<section class="info-section">
-
-<div class="section-header">
-
-<i class="fa-solid fa-rocket"></i>
-
-<h2>Future Scope</h2>
-
-</div>
-
-<ul class="feature-list">
-
-<li>
-
-<i class="fa-solid fa-brain"></i>
-
-<strong>AI Passenger Detection</strong>
-
-Computer vision models could improve passenger counting accuracy.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-map-location-dot"></i>
-
-<strong>GPS Bus Tracking</strong>
-
-Real-time GPS tracking can show the exact location of buses.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-mobile-screen"></i>
-
-<strong>Passenger Mobile App</strong>
-
-Passengers could check seat availability and routes from mobile apps.
-
-</li>
-
-<li>
-
-<i class="fa-solid fa-chart-simple"></i>
-
-<strong>Demand Prediction</strong>
-
-Machine learning models can predict peak travel times.
-
-</li>
-
-</ul>
-
-</section>
-
-</main>
-
-</div>
-
-<script src="script.js"></script>
-
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="logo">
+                <i class="fa-solid fa-bus"></i>
+                <span>SmartBus IoT</span>
+            </div>
+
+            <p class="subtitle">
+                IoT Bus Overcrowding Detection & Smart Route Monitoring System
+            </p>
+
+            <div class="time-display" id="clock">--:--:--</div>
+        </header>
+
+        <main class="main-content">
+
+            <!-- Route Planner -->
+            <section class="route-planner info-section">
+                <div class="section-header">
+                    <i class="fa-solid fa-route"></i>
+                    <h2>Bus Route Planner</h2>
+                </div>
+
+                <div class="route-controls">
+                    <select id="from-select"></select>
+
+                    <select id="to-select"></select>
+
+                    <div class="passenger-input">
+                        <i class="fa-solid fa-users"></i>
+                        <input
+                            type="number"
+                            id="passenger-count"
+                            min="1"
+                            max="10"
+                            value="1"
+                        >
+                    </div>
+
+                    <button onclick="searchRoutes()">
+                        Search Buses
+                    </button>
+                </div>
+
+                <div id="route-results" class="bus-results-grid"></div>
+
+                <div id="show-buses-container" class="show-buses-container" style="display:none;">
+                    <button id="show-buses-btn">
+                        <i class="fa-solid fa-list"></i>
+                        Show Available Buses
+                    </button>
+                </div>
+            </section>
+
+            <!-- Route Map -->
+            <section class="info-section" id="map-section" style="display:none;">
+                <div class="section-header">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <h2>Bus Route Map</h2>
+                </div>
+
+                <div class="map-container">
+                    <iframe
+                        id="route-map"
+                        width="100%"
+                        height="420"
+                        style="border:0;border-radius:12px"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </section>
+
+            <!-- Bus Selector -->
+            <section class="bus-selector" id="bus-selector" style="display:none;">
+                <label for="bus-select">
+                    <i class="fa-solid fa-bus"></i>
+                    Selected Bus
+                </label>
+
+                <select id="bus-select"></select>
+            </section>
+
+            <!-- Dashboard -->
+            <section class="stats-grid" id="stats-grid" style="display:none;">
+
+                <div class="stat-card">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div class="card-info">
+                        <h3>Filled Seats</h3>
+                        <div class="value" id="filled-seats">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-chair"></i>
+                    </div>
+
+                    <div class="card-info">
+                        <h3>Available Seats</h3>
+                        <div class="value" id="available-seats">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-maximize"></i>
+                    </div>
+
+                    <div class="card-info">
+                        <h3>Total Seats</h3>
+                        <div class="value" id="total-seats">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card status" id="status-card">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-shield-halved" id="status-icon"></i>
+                    </div>
+
+                    <div class="card-info">
+                        <h3>Bus Status</h3>
+                        <div class="badge value" id="status-badge">
+                            Seats Available
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+
+                    <div class="card-info">
+                        <h3>Last Event</h3>
+
+                        <div class="value text-value" id="last-event">
+                            System Ready
+                        </div>
+
+                        <div class="timestamp" id="last-event-time">
+                            --
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- System Architecture -->
+            <section class="info-section">
+                <div class="section-header">
+                    <i class="fa-solid fa-microchip"></i>
+                    <h2>System Architecture</h2>
+                </div>
+
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-satellite-dish"></i>
+                        <strong>Dual Ultrasonic Passenger Detection:</strong>
+                        Two ultrasonic sensors are installed at the entrance and exit of the bus door. These sensors monitor passenger movement through distance detection.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                        <strong>Directional Passenger Flow Detection:</strong>
+                        Sensor activation order determines whether a passenger enters or exits the bus.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-microchip"></i>
+                        <strong>ESP32 Edge Controller:</strong>
+                        The ESP32 processes sensor signals, manages passenger counts, and sends data to the cloud.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-database"></i>
+                        <strong>Cloud Storage using Google Sheets:</strong>
+                        Passenger occupancy data is stored in Google Sheets through Apps Script APIs.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-globe"></i>
+                        <strong>Real-Time Dashboard:</strong>
+                        Users can monitor bus occupancy and availability from a web dashboard.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-route"></i>
+                        <strong>Smart Route Planner:</strong>
+                        Passengers can search routes between cities and view available buses and fares.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Future Scope -->
+            <section class="info-section">
+                <div class="section-header">
+                    <i class="fa-solid fa-rocket"></i>
+                    <h2>Future Scope</h2>
+                </div>
+
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-brain"></i>
+                        <strong>AI Passenger Detection</strong>
+                        Computer vision models could improve passenger counting accuracy.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <strong>GPS Bus Tracking</strong>
+                        Real-time GPS tracking can show the exact location of buses.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <strong>Passenger Mobile App</strong>
+                        Passengers could check seat availability and routes from mobile apps.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <strong>Demand Prediction</strong>
+                        Machine learning models can predict peak travel times.
+                    </li>
+                </ul>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
 </body>
-
 </html>
