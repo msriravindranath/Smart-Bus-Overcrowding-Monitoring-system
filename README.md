@@ -86,7 +86,7 @@ Smart-Bus-Overcrowding-Monitoring-System/
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/Smart-Bus-Overcrowding-Monitoring-System.git
+git clone https://github.com/msriravindranath/Smart-Bus-Overcrowding-Monitoring-System.git
 ```
 
 ### Firmware
