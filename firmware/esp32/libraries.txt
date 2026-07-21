@@ -1,0 +1,23 @@
+# Required Libraries
+
+The following libraries are required to compile and upload the ESP32 firmware.
+
+## Built-in ESP32 Libraries
+
+* WiFi.h
+* Wire.h
+* HTTPClient.h
+
+These libraries are included with the ESP32 Arduino Core.
+
+## External Libraries
+
+Install the following libraries using the Arduino IDE Library Manager before uploading the code:
+
+* LiquidCrystal_I2C
+* ESP32Servo
+
+## Development Environment
+
+* Arduino IDE 2.x or later
+* ESP32 Arduino Core (latest stable version)
