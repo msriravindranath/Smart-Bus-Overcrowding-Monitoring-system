@@ -1,0 +1,41 @@
+# Visual Studio Code
+
+.vscode/
+
+# Arduino temporary files
+
+*.tmp
+*.bak
+
+# Log files
+
+*.log
+
+# Operating System files
+
+.DS_Store
+Thumbs.db
+
+# Temporary files
+
+*.temp
+*.cache
+
+# Compiled binaries
+
+*.bin
+*.elf
+
+# Python cache (if any scripts are added later)
+
+**pycache**/
+*.pyc
+
+# Node modules (if frontend is expanded in the future)
+
+node_modules/
+
+# Environment files
+
+.env
+.env.local
