@@ -163,6 +163,14 @@ This project is licensed under the MIT License.
 
 ---
 
+## Project Demonstration
+
+A complete demonstration and explanation of the Smart Bus Management System is available on YouTube.
+
+**Project Demo:**
+[https://youtu.be/exnLmIPXFkQ?si=qfd3pBZ-d2V3vmcx]
+
+
 ## Author
 
 **M. Sree Ravindranath**
